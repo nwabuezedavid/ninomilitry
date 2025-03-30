@@ -10,7 +10,20 @@ from django.contrib.auth.models import User
 # API Keys
 NEWS_API_KEY = "44a6c530e258446b8ac1a484816a6ba3"  # Replace with your News API Key
 PEXELS_API_KEY = "EdTUeQZfE2vteymon62P1uK6uizxyb7tr8QfYdRoOMqBHUuhTpWK869R"  # Replace with your Pexels API Key
-
+MILITARY_QUERIES = [
+    "military",
+    "army",
+    "navy",
+    "air force",
+    "defense",
+    "soldiers",
+    " nato military ",
+    " NATO  ",
+    " NATO Officer ",
+    "military training",
+    "military operations",
+    "military strategy"
+]
 def get_random_military_officer_image():
     """Fetch a random military officer image from Pexels"""
     url = "https://api.pexels.com/v1/search"
@@ -29,7 +42,8 @@ def get_random_military_officer_image():
 def fetch_and_save_military_news():
     """Fetch military news and save articles with random military images"""
     newsapi = NewsApiClient(api_key=NEWS_API_KEY)
-    articles = newsapi.get_everything(q='military', language='en', sort_by='publishedAt', page_size=10)
+    random_query = random.choice(MILITARY_QUERIES)
+    articles = newsapi.get_everything(q=random_query, language='en', sort_by='publishedAt', page_size=12)
 
     selected_articles = random.sample(articles['articles'], min(len(articles['articles']), 5))
 
@@ -43,7 +57,7 @@ def fetch_and_save_military_news():
         content = article['description'] or ''
         source_url = article['url']
         published_date = article['publishedAt']
-        image_url = article['urlToImage'] # Get a random image
+        image_url = article['urlToImage'] or get_random_military_officer_image()  # Get a random image
 
         # Check if the article already exists
         if not BlogPost.objects.filter(slug=slug).exists():
@@ -54,6 +68,7 @@ def fetch_and_save_military_news():
                 content=content,
                 created_date=timezone.now(),
                 published_date=published_date,
+                is_featured=True,
                 url=image_url  # Assigning the image URL
             )
             blog_post.save()

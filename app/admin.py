@@ -8,16 +8,16 @@ class CommentInline(admin.TabularInline):
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'published_date', 'is_featured')
-    list_filter = ('is_featured', 'published_date', 'author')
-    search_fields = ('title', 'content', 'author__username')
+    list_display = ('title', 'author', 'published_date', 'is_featured',"url")
+    list_filter = ('is_featured', 'published_date', 'author','url')
+    search_fields = ('title', 'content', 'author__username',"url")
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'published_date'
     inlines = [CommentInline]
     
     fieldsets = (
         (None, {
-            'fields': ('title', 'slug', 'author', 'content')
+            'fields': ('title', 'slug', 'author', 'content',"url")
         }),
         ('Publishing', {
             'fields': ('published_date', 'is_featured'),

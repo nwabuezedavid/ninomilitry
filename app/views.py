@@ -42,7 +42,7 @@ def home(request):
     })
 
 def blog_list(request):
-    posts = BlogPost.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+    posts = BlogPost.objects.all().order_by('-published_date')
     query = request.GET.get('q')
     if query:
         posts = posts.filter(
@@ -53,7 +53,7 @@ def blog_list(request):
     return render(request, './bloglist.html', {'posts': posts, 'query': query})
 
 def blog_detail(request, slug):
-    post = get_object_or_404(BlogPost, slug=slug, published_date__lte=timezone.now())
+    post = get_object_or_404(BlogPost, slug=slug,)
     comments = post.comments.filter(approved=True).order_by('-created_date')
     
     if request.method == 'POST':
