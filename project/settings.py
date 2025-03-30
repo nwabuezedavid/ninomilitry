@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "whitenoise.runserver_nostatic",    
-    'tailwind',
     'app',
     'adminsx',
 ]
@@ -84,7 +83,6 @@ WSGI_APPLICATION = 'project.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-import  os 
 from urllib.parse import urlparse
 tmpPostgres = urlparse('postgresql://neondb_owner:npg_h8wMB6onekHs@ep-shrill-river-a56911lb-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require')
 
