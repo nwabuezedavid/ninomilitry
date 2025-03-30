@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # }
 import  os 
 from urllib.parse import urlparse
-tmpPostgres = urlparse('postgresql://neondb_owner:npg_gqvS3RNJQVM4@ep-curly-bonus-a5jeb9km-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require')
+tmpPostgres = urlparse('postgresql://neondb_owner:npg_h8wMB6onekHs@ep-shrill-river-a56911lb-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require')
 
 DATABASES = {
     'default': {
