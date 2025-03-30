@@ -266,7 +266,7 @@ def personnel(request):
     }
     return render(request, 'personnel/home.html', context)
 
-def personnel_detail(request, pk):
+def personnel_detailx(request, pk):
     person = get_object_or_404(Personnel, pk=pk)
     achievements = person.achievements.all().order_by('-date')
     awards = person.awards.all()

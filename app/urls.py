@@ -13,5 +13,5 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('post/<slug:slug>/edit/', views.edit_post, name='edit_post'),
     path('personnel', views.personnel, name='personnel'),
-    path('personnel/<int:pk>/', views.personnel_detail, name='personnel_detail'),
+    path('personnel/<int:pk>/', views.personnel_detailx, name='personnel_detailx'),
 ]
