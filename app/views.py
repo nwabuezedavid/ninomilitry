@@ -236,6 +236,9 @@ def blog_list(request):
 def about(request):
     return render(request, "./about.html")
 
+def contact(request):
+    return render(request, "./contact.html")
+
 def logoutuser(request):
     logout(request)
     return render(request, "./logout.html")
