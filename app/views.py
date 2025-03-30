@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.contrib import messages
 from .models import *
 from .forms import UserRegistrationForm, MilitaryProfileForm, BlogPostForm, CommentForm
-from .new import *
+# from .new import *
 def home(request):
     featured_posts = BlogPost.objects.filter(is_featured=True, published_date__lte=timezone.now()).order_by('-published_date')[:3]
     recent_posts = BlogPost.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:5]
