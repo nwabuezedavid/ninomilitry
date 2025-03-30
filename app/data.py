@@ -87,19 +87,7 @@ def create_initial_data():
         Award.objects.get_or_create(name=award_data['name'], description=award_data['description'], url= award_data['url'])
     
     # Get objects for relationships
-    gen_rank = Rank.objects.get(abbreviation='GEN')
-    ltg_rank = Rank.objects.get(abbreviation='LTG')
-    col_rank = Rank.objects.get(abbreviation='COL')
-   
-
-    us = Country.objects.get(name='United States')
-    uk = Country.objects.get(name='United Kingdom')
-    france = Country.objects.get(name='France')
     
-    medal_of_honor = Award.objects.get(name='Medal of Honor')
-    silver_star = Award.objects.get(name='Silver Star')
-    bronze_star = Award.objects.get(name='Bronze Star')
-    legion_of_merit = Award.objects.get(name='Legion of Merit')
     image_urls  = [
            "https://shape.nato.int/resources/internal/file_views_listing/19546/10_ALBNMRMGenPetritCUNI_.jpg",
     "https://shape.nato.int/resources/internal/file_views_listing/19547/5_belgium_.jpg",
