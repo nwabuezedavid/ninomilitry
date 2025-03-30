@@ -231,7 +231,7 @@ def logoutuser(request):
     logout(request)
     return render(request, "./logout.html")
 
-from .data import create_initial_data
+# from .data import create_initial_data
 def personnel(request):
     personnel_list = Personnel.objects.all()
     countries = Country.objects.all()
