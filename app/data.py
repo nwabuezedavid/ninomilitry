@@ -35,9 +35,12 @@ def create_initial_data():
         {'name': 'Lieutenant', 'abbreviation': 'LT'},
     ]
     
-    for rank_data in ranks:
-        Rank.objects.get_or_create(name=rank_data['name'], abbreviation=rank_data['abbreviation'])
-    
+    for rank in ranks:
+        duplicates = Rank.objects.filter(name=rank['name'], abbreviation=rank['abbreviation'])
+        if duplicates.count() > 1:
+            # Keep the first entry and delete the rest
+            first_entry = duplicates.first()
+            duplicates.exclude(id=first_entry.id).delete()
     # Create countries
     countries = [
     ('United States', 'US'),
