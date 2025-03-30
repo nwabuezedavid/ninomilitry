@@ -1,0 +1,331 @@
+{% extends "./base.html" %}
+
+{% block title %}Dashboard | Military Blog Admin{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Stats Cards -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 text-blue-500 mr-4">
+                <i class="fas fa-file-alt text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Total News</p>
+                <p class="text-2xl font-bold">{{ total_News }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'admin_post_list' %}" class="text-blue-500 text-sm hover:underline">View all News</a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-100 text-green-500 mr-4">
+                <i class="fas fa-comments text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Total Comments</p>
+                <p class="text-2xl font-bold">{{ total_comments }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'admin_comment_list' %}" class="text-green-500 text-sm hover:underline">View all comments</a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-100 text-purple-500 mr-4">
+                <i class="fas fa-users text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Total Users</p>
+                <p class="text-2xl font-bold">{{ total_users }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'admin_user_list' %}" class="text-purple-500 text-sm hover:underline">View all users</a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-100 text-yellow-500 mr-4">
+                <i class="fas fa-star text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Featured News</p>
+                <p class="text-2xl font-bold">{{ featured_posts.count }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'admin_post_list' %}?featured=true" class="text-yellow-500 text-sm hover:underline">View featured News</a>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Recent News -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold text-gray-800">Recent News</h2>
+            <a href="{% url 'admin_post_create' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm">Add New</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for post in recent_News %}
+                    <tr>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ post.title|truncatechars:30 }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ post.author.username }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ post.created_date|date:"M d, Y" }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap text-sm">
+                            <a href="{% url 'admin_post_detail' pk=post.id %}" class="text-blue-500 hover:underline mr-2">View</a>
+                            <a href="{% url 'admin_post_edit' pk=post.id %}" class="text-green-500 hover:underline">Edit</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="py-4 px-4 text-center text-gray-500">No News found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'admin_post_list' %}" class="text-blue-500 text-sm hover:underline">View all News</a>
+        </div>
+    </div>
+
+    <!-- Recent Comments -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold text-gray-800">Recent Comments</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comment</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for comment in recent_comments %}
+                    <tr>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ comment.text|truncatechars:30 }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ comment.author.username }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ comment.created_date|date:"M d, Y" }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            {% if comment.approved %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
+                            {% else %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="py-4 px-4 text-center text-gray-500">No comments found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'admin_comment_list' %}" class="text-green-500 text-sm hover:underline">View all comments</a>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <!-- New Users -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">New Users</h2>
+        <ul class="divide-y divide-gray-200">
+            {% for user in recent_users %}
+            <li class="py-3">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">{{ user.username }}</p>
+                        <p class="text-sm text-gray-500 truncate">{{ user.email }}</p>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        {{ user.date_joined|date:"M d, Y" }}
+                    </div>
+                </div>
+            </li>
+            {% empty %}
+            <li class="py-3 text-center text-gray-500">No users found.</li>
+            {% endfor %}
+        </ul>
+        <div class="mt-4">
+            <a href="{% url 'admin_user_list' %}" class="text-purple-500 text-sm hover:underline">View all users</a>
+        </div>
+    </div>
+
+    <!-- Branch Distribution -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Military Branch Distribution</h2>
+        <div class="h-64">
+            <canvas id="branchChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Pending Comments -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Pending Comments</h2>
+        <ul class="divide-y divide-gray-200">
+            {% for comment in pending_comments %}
+            <li class="py-3">
+                <div class="flex flex-col space-y-1">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ comment.text|truncatechars:50 }}</p>
+                    <div class="flex justify-between">
+                        <p class="text-xs text-gray-500">By {{ comment.author.username }} on {{ comment.created_date|date:"M d, Y" }}</p>
+                        <a href="{% url 'admin_comment_detail' pk=comment.id %}" class="text-xs text-blue-500 hover:underline">Review</a>
+                    </div>
+                </div>
+            </li>
+            {% empty %}
+            <li class="py-3 text-center text-gray-500">No pending comments.</li>
+            {% endfor %}
+        </ul>
+        <div class="mt-4">
+            <a href="{% url 'admin_comment_list' %}?approved=false" class="text-yellow-500 text-sm hover:underline">View all pending comments</a>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-6">
+    <!-- Featured News -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Featured News</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Published Date</th>
+                        <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for post in featured_News %}
+                    <tr>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ post.title|truncatechars:50 }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ post.author.username }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">{{ post.published_date|date:"M d, Y" }}</div>
+                        </td>
+                        <td class="py-2 px-4 whitespace-nowrap text-sm">
+                            <a href="{% url 'admin_post_detail' pk=post.id %}" class="text-blue-500 hover:underline mr-2">View</a>
+                            <a href="{% url 'admin_post_edit' pk=post.id %}" class="text-green-500 hover:underline mr-2">Edit</a>
+                            <form method="post" action="{% url 'admin_post_feature' pk=post.id %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="text-yellow-500 hover:underline bg-transparent border-none p-0 cursor-pointer">Unfeature</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="py-4 px-4 text-center text-gray-500">No featured News found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Branch distribution chart
+    const branchCtx = document.getElementById('branchChart').getContext('2d');
+    const branchData = {
+        labels: [
+            {% for branch in branch_distribution %}
+                '{{ branch.branch|default:"Not specified"|title }}',
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Users by Branch',
+            data: [
+                {% for branch in branch_distribution %}
+                    {{ branch.count }},
+                {% endfor %}
+            ],
+            'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+    
+    const branchChart = new Chart(branchCtx, {
+        type: 'pie',
+        data: branchData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        boxWidth: 12
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+                

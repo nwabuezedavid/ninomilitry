@@ -1,0 +1,159 @@
+{% extends './base.html' %}
+
+{% block title %}Register | NATO MILITARY{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-8">Join the NATO MILITARY Community</h1>
+    
+    <div class="bg-white rounded-lg shadow-md p-8">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="p-4 mb-4 rounded-md {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- User Form Fields -->
+                <div class="md:col-span-2">
+                    <h2 class="text-xl font-semibold mb-4">Account Information</h2>
+                </div>
+                
+                <div>
+                    <label for="{{ user_form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    {{ user_form.username.errors }}
+                    <input type="text" name="{{ user_form.username.name }}" id="{{ user_form.username.id_for_label }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if user_form.username.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ user_form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ user_form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="{{ user_form.email.name }}" id="{{ user_form.email.id_for_label }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if user_form.email.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ user_form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ user_form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <input type="text" name="{{ user_form.first_name.name }}" id="{{ user_form.first_name.id_for_label }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if user_form.first_name.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ user_form.first_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ user_form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <input type="text" name="{{ user_form.last_name.name }}" id="{{ user_form.last_name.id_for_label }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if user_form.last_name.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ user_form.last_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ user_form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" name="{{ user_form.password1.name }}" id="{{ user_form.password1.id_for_label }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Password must be at least 8 characters and contain letters and numbers.</p>
+                    {% if user_form.password1.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ user_form.password1.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ user_form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                    <input type="password" name="{{ user_form.password2.name }}" id="{{ user_form.password2.id_for_label }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if user_form.password2.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ user_form.password2.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Military Profile Fields -->
+                <div class="md:col-span-2 pt-4 border-t">
+                    <h2 class="text-xl font-semibold mb-4">Military Information</h2>
+                </div>
+                
+                <div>
+                    <label for="{{ profile_form.branch.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Military Branch</label>
+                    <select name="{{ profile_form.branch.name }}" id="{{ profile_form.branch.id_for_label }}" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="" selected>Select a branch</option>
+                        <option value="army">Army</option>
+                        <option value="navy">Navy</option>
+                        <option value="air_force">Air Force</option>
+                        <option value="marines">Marines</option>
+                        <option value="coast_guard">Coast Guard</option>
+                        <option value="space_force">Space Force</option>
+                        <option value="other">Other</option>
+                    </select>
+                    {% if profile_form.branch.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ profile_form.branch.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ profile_form.rank.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Rank</label>
+                    <input type="text" name="{{ profile_form.rank.name }}" id="{{ profile_form.rank.id_for_label }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if profile_form.rank.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ profile_form.rank.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ profile_form.years_of_service.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Years of Service</label>
+                    <input type="number" name="{{ profile_form.years_of_service.name }}" id="{{ profile_form.years_of_service.id_for_label }}" min="0" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% if profile_form.years_of_service.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ profile_form.years_of_service.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ profile_form.profile_image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
+                    <input type="file" name="{{ profile_form.profile_image.name }}" id="{{ profile_form.profile_image.id_for_label }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           accept="image/*">
+                    {% if profile_form.profile_image.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ profile_form.profile_image.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label for="{{ profile_form.bio.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                    <textarea name="{{ profile_form.bio.name }}" id="{{ profile_form.bio.id_for_label }}" rows="4" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Tell us about your military experience..."></textarea>
+                    {% if profile_form.bio.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ profile_form.bio.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="pt-4">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition-colors">
+                    Register
+                </button>
+            </div>
+            
+            <div class="text-center mt-4">
+                <p class="text-gray-600">
+                    Already have an account? <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-800 font-medium">Log in here</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

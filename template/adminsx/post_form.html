@@ -1,0 +1,111 @@
+{% extends "./base.html" %}
+
+{% block title %}{{ title }} | Military Blog Admin{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'admin_dashboard' %}" class="hover:text-gray-700">Dashboard</a> &raquo; 
+<a href="{% url 'admin_post_list' %}" class="hover:text-gray-700">News</a> &raquo; 
+{{ title }}
+{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-md p-2">
+
+<div class="bg-white rounded-lg shadow-md p-6">
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- Title -->
+        <div>
+            <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            {{ form.title.errors }}
+            <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {% if form.title.errors %}border-red-500{% endif %}">
+            {% if form.title.help_text %}
+            <p class="mt-1 text-sm text-gray-500">{{ form.title.help_text }}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Slug -->
+        <div>
+            <label for="{{ form.slug.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+            {{ form.slug.errors }}
+            <input type="text" name="{{ form.slug.name }}" id="{{ form.slug.id_for_label }}" value="{{ form.slug.value|default:'' }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {% if form.slug.errors %}border-red-500{% endif %}">
+            {% if form.slug.help_text %}
+            <p class="mt-1 text-sm text-gray-500">{{ form.slug.help_text }}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Content -->
+        <div>
+            <label for="{{ form.content.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Content</label>
+            {{ form.content.errors }}
+            <textarea name="{{ form.content.name }}" id="{{ form.content.id_for_label }}" rows="15" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {% if form.content.errors %}border-red-500{% endif %}">{{ form.content.value|default:'' }}</textarea>
+            {% if form.content.help_text %}
+            <p class="mt-1 text-sm text-gray-500">{{ form.content.help_text }}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Featured Image -->
+        <div>
+            <label for="{{ form.featured_image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
+            {{ form.featured_image.errors }}
+            
+            {% if post and post.featured_image %}
+            <div class="mb-2">
+                <img src="{{ post.featured_image.url }}" alt="Current featured image" class="h-32 w-auto object-cover rounded-md">
+                <p class="text-sm text-gray-500 mt-1">Current image</p>
+            </div>
+            {% endif %}
+            
+            <input type="file" name="{{ form.featured_image.name }}" id="{{ form.featured_image.id_for_label }}" class="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            {% if form.featured_image.help_text %}
+            <p class="mt-1 text-sm text-gray-500">{{ form.featured_image.help_text }}</p>
+            {% endif %}
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Published Date -->
+            <div>
+                <label for="{{ form.published_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Published Date</label>
+                {{ form.published_date.errors }}
+                <input type="datetime-local" name="{{ form.published_date.name }}" id="{{ form.published_date.id_for_label }}" value="{{ form.published_date.value|date:'Y-m-d\TH:i' }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {% if form.published_date.errors %}border-red-500{% endif %}">
+                <p class="mt-1 text-sm text-gray-500">Leave empty to save as draft</p>
+            </div>
+            
+            <!-- Is Featured -->
+            <div>
+                <div class="flex items-center h-full">
+                    <input type="checkbox" name="{{ form.is_featured.name }}" id="{{ form.is_featured.id_for_label }}" {% if form.is_featured.value %}checked{% endif %} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:ring-offset-0">
+                    <label for="{{ form.is_featured.id_for_label }}" class="ml-2 block text-sm font-medium text-gray-700">Feature this post</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3">
+            <a href="{% if post %}{% url 'admin_post_detail' pk=post.id %}{% else %}{% url 'admin_post_list' %}{% endif %}" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">Cancel</a>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Save Post</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-generate slug from title
+    const titleInput = document.getElementById('{{ form.title.id_for_label }}');
+    const slugInput = document.getElementById('{{ form.slug.id_for_label }}');
+    
+    titleInput.addEventListener('blur', function() {
+        if (slugInput.value === '') {
+            const slug = titleInput.value
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            
+            slugInput.value = slug;
+        }
+    });
+</script>
+{% endblock %}

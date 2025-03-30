@@ -1,0 +1,213 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | NATO Military Personnel{% endblock %}
+
+{% block extra_css %}
+<style>
+    .achievement-form {
+        background-color: #f8f9fa;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+    }
+    .delete-row {
+        color: #dc3545;
+        cursor: pointer;
+    }
+    .add-row {
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <a href="{% if person %}{% url 'personnel_detail' person.id %}{% else %}{% url 'home' %}{% endif %}" class="btn btn-secondary">&laquo; Back</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>{{ title }}</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="mb-3">Personal Information</h4>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                            {{ form.first_name.errors }}
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                            {{ form.last_name.errors }}
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.rank.id_for_label }}" class="form-label">Rank</label>
+                            {{ form.rank.errors }}
+                            {{ form.rank  }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                            {{ form.country.errors }}
+                            {{ form.country }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
+                        {{ form.date_of_birth.errors }}
+                        {{ form.date_of_birth  }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.photo.id_for_label }}" class="form-label">Photo</label>
+                        {{ form.photo.errors }}
+                        {{ form.photo  }}
+                        {% if person.photo %}
+                            <div class="mt-2">
+                                <img src="{{ person.photo.url }}" alt="Current photo" style="max-width: 100px; max-height: 100px;">
+                                <p class="text-muted">Current photo</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h4 class="mb-3">Service Information</h4>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.years_of_service.id_for_label }}" class="form-label">Years of Service</label>
+                            {{ form.years_of_service.errors }}
+                            {{ form.years_of_service  }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.is_active.id_for_label }}" class="form-label">Active Status</label>
+                            {{ form.is_active.errors }}
+                            <div class="form-check mt-2">
+                                {{ form.is_active }}
+                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                    Currently Active
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.service_start_date.id_for_label }}" class="form-label">Service Start Date</label>
+                            {{ form.service_start_date.errors }}
+                            {{ form.service_start_date  }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.service_end_date.id_for_label }}" class="form-label">Service End Date</label>
+                            {{ form.service_end_date.errors }}
+                            {{ form.service_end_date  }}
+                            <small class="text-muted">Leave blank if still active</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.awards.id_for_label }}" class="form-label">Awards</label>
+                        {{ form.awards.errors }}
+                        <div class="border p-3 rounded" style="max-height: 200px; overflow-y: auto;">
+                            {{ form.awards }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.biography.id_for_label }}" class="form-label">Biography</label>
+                {{ form.biography.errors }}
+                {{ form.biography  }}
+            </div>
+            
+            <h4 class="mt-4 mb-3">Achievements</h4>
+            {{ achievement_formset.management_form }}
+            
+            <div id="achievement-forms">
+                {% for achievement_form in achievement_formset %}
+                    <div class="achievement-form">
+                        {% if achievement_form.instance.pk %}{{ achievement_form.DELETE }}{% endif %}
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="{{ achievement_form.title.id_for_label }}" class="form-label">Title</label>
+                                    {{ achievement_form.title.errors }}
+                                    {{ achievement_form.title  }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ achievement_form.date.id_for_label }}" class="form-label">Date</label>
+                                    {{ achievement_form.date.errors }}
+                                    {{ achievement_form.date  }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ achievement_form.description.id_for_label }}" class="form-label">Description</label>
+                            {{ achievement_form.description.errors }}
+                            {{ achievement_form.description  }}
+                        </div>
+                        
+                        {% if achievement_form.instance.pk %}
+                            <div class="text-end">
+                                <label class="form-check-label delete-row">
+                                    <input type="checkbox" name="{{ achievement_form.DELETE.html_name }}" id="{{ achievement_form.DELETE.id_for_label }}" class="form-check-input">
+                                    Delete this achievement
+                                </label>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">{{ button_text }}</button>
+                <a href="{% if person %}{% url 'personnel_detail' person.id %}{% else %}{% url 'home' %}{% endif %}" class="btn btn-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add a custom widget for the formset
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hide the DELETE field labels
+        const deleteCheckboxes = document.querySelectorAll('input[name$="-DELETE"]');
+        deleteCheckboxes.forEach(function(checkbox) {
+            const label = checkbox.parentNode;
+            if (label.tagName === 'LABEL') {
+                label.style.display = 'inline-block';
+            }
+        });
+    });
+</script>
+{% endblock %}

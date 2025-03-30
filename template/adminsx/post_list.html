@@ -1,0 +1,198 @@
+{% extends "./base.html" %}
+
+{% block title %}News | Military Blog Admin{% endblock %}
+{% block page_title %}Posts{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'admin_dashboard' %}" class="hover:text-gray-700">Dashboard</a> &raquo; Posts
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'admin_post_create' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Add New Post</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">Filters</h2>
+    <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+            <label for="author" class="block text-sm font-medium text-gray-700 mb-1">Author</label>
+            <select id="author" name="author" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                <option value="">All Authors</option>
+                {% for author in authors %}
+                <option value="{{ author.id }}" {% if current_author == author.id|stringformat:"s" %}selected{% endif %}>{{ author.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div>
+            <label for="featured" class="block text-sm font-medium text-gray-700 mb-1">Featured</label>
+            <select id="featured" name="featured" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                <option value="">All News</option>
+                <option value="true" {% if current_featured == 'true' %}selected{% endif %}>Featured</option>
+                <option value="false" {% if current_featured == 'false' %}selected{% endif %}>Not Featured</option>
+            </select>
+        </div>
+        
+        <div>
+            <label for="published" class="block text-sm font-medium text-gray-700 mb-1">Published</label>
+            <select id="published" name="published" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                <option value="">All News</option>
+                <option value="true" {% if current_published == 'true' %}selected{% endif %}>Published</option>
+                <option value="false" {% if current_published == 'false' %}selected{% endif %}>Draft</option>
+            </select>
+        </div>
+        
+        <div>
+            <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+            <div class="relative">
+                <input type="text" id="search" name="search" value="{{ search_query }}" placeholder="Search posts..." class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 pl-10">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="md:col-span-2 lg:col-span-4 flex justify-end">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mr-2">Apply Filters</button>
+            <a href="{% url 'admin_post_list' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md">Reset</a>
+        </div>
+    </form>
+</div>
+
+<!-- News Table -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Featured</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comments</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for post in page_obj %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ post.title|truncatechars:40 }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ post.author.username }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ post.created_date|date:"M d, Y" }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if post.published_date %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Published</span>
+                        {% else %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if post.is_featured %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Featured</span>
+                        {% else %}
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ post.comments.count }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <a href="{% url 'admin_post_detail' pk=post.id %}" class="text-blue-500 hover:text-blue-700 mr-3">View</a>
+                        <a href="{% url 'admin_post_edit' pk=post.id %}" class="text-green-500 hover:text-green-700 mr-3">Edit</a>
+                        <a href="#" onclick="confirmDelete('{{ post.id }}', '{{ post.title|escapejs }}')" class="text-red-500 hover:text-red-700">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">No News found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="bg-white rounded-lg shadow-md p-4 mt-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-sm text-gray-700">
+                Showing <span class="font-medium">{{ page_obj.start_index }}</span> to <span class="font-medium">{{ page_obj.end_index }}</span> of <span class="font-medium">{{ page_obj.paginator.count }}</span> posts
+            </p>
+        </div>
+        <div>
+            <nav class="flex items-center">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}{% if current_featured %}&featured={{ current_featured }}{% endif %}{% if current_published %}&published={{ current_published }}{% endif %}" class="px-3 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 mr-2">Previous</a>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="px-3 py-1 rounded-md bg-blue-500 text-white mr-2">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}{% if current_featured %}&featured={{ current_featured }}{% endif %}{% if current_published %}&published={{ current_published }}{% endif %}" class="px-3 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 mr-2">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}{% if current_featured %}&featured={{ current_featured }}{% endif %}{% if current_published %}&published={{ current_published }}{% endif %}" class="px-3 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">Next</a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Export Button -->
+<div class="mt-6 flex justify-end">
+    <a href="{% url 'admin_post_export' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
+        <i class="fas fa-file-export mr-2"></i> Export to CSV
+    </a>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Confirm Deletion</h3>
+        <p class="text-gray-700 mb-6">Are you sure you want to delete the post "<span id="postTitle"></span>"? This action cannot be undone.</p>
+        <div class="flex justify-end space-x-4">
+            <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">Cancel</button>
+            <form id="deleteForm" method="post" action="">
+                {% csrf_token %}
+                <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function confirmDelete(postId, postTitle) {
+        document.getElementById('postTitle').textContent = postTitle;
+        document.getElementById('deleteForm').action = "{% url 'admin_post_delete' pk=0 %}".replace('0', postId);
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+    
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDeleteModal();
+        }
+    });
+</script>
+{% endblock %}

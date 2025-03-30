@@ -1,0 +1,146 @@
+{% extends './base.html' %}
+
+{% block title %}{{ action }} Article | NATO MILITARY{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">{{ action }} Article</h1>
+    
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                    <p class="font-bold">Please correct the errors below:</p>
+                    <ul class="list-disc list-inside">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                {{ form.title.errors }}
+                <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" 
+                       value="{{ form.title.value|default:'' }}"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <div>
+                <label for="{{ form.slug.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                {{ form.slug.errors }}
+                <input type="text" name="{{ form.slug.name }}" id="{{ form.slug.id_for_label }}" 
+                       value="{{ form.slug.value|default:'' }}"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p class="text-xs text-gray-500 mt-1">{{ form.slug.help_text }}</p>
+            </div>
+            
+            <div>
+                <label for="{{ form.featured_image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
+                {{ form.featured_image.errors }}
+                <input type="file" name="{{ form.featured_image.name }}" id="{{ form.featured_image.id_for_label }}" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       accept="image/*">
+                {% if form.instance.featured_image %}
+                    <div class="mt-2 flex items-center">
+                        <img src="{{ form.instance.featured_image.url }}" alt="Current featured image" class="h-20 w-auto rounded">
+                        <p class="ml-2 text-sm text-gray-500">Current image</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label for="{{ form.content.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                {{ form.content.errors }}
+                <textarea name="{{ form.content.name }}" id="{{ form.content.id_for_label }}" rows="12" 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 editor"
+                          placeholder="Write your article here...">{{ form.content.value|default:'' }}</textarea>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="{{ form.is_featured.name }}" id="{{ form.is_featured.id_for_label }}" 
+                       {% if form.is_featured.value %}checked{% endif %}
+                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label for="{{ form.is_featured.id_for_label }}" class="ml-2 block text-sm text-gray-700">
+                    Feature this article on the home page
+                </label>
+            </div>
+            
+            <div class="pt-4 flex justify-between">
+                <a href="{% if action == 'Edit' %}{% url 'blog_detail' form.instance.slug %}{% else %}{% url 'blog_list' %}{% endif %}" 
+                   class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-md transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition-colors">
+                    {% if action == 'Edit' %}Update{% else %}Publish{% endif %} Article
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Simple slug generator
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleInput = document.getElementById('{{ form.title.id_for_label }}');
+        const slugInput = document.getElementById('{{ form.slug.id_for_label }}');
+        
+        if (titleInput && slugInput) {
+            titleInput.addEventListener('blur', function() {
+                // Only generate slug if it's empty
+                if (slugInput.value === '') {
+                    const titleValue = titleInput.value.trim();
+                    if (titleValue) {
+                        // Create slug: lowercase, replace spaces with hyphens, remove special chars
+                        const slug = titleValue
+                            .toLowerCase()
+                            .replace(/[^\w\s-]/g, '')
+                            .replace(/\s+/g, '-')
+                            .replace(/-+/g, '-');
+                        
+                        slugInput.value = slug;
+                    }
+                }
+            });
+        }
+        
+        // Simple image preview
+        const imageInput = document.getElementById('{{ form.featured_image.id_for_label }}');
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    const parent = this.closest('div');
+                    let preview = parent.querySelector('.image-preview');
+                    
+                    if (!preview) {
+                        preview = document.createElement('div');
+                        preview.className = 'image-preview mt-2 flex items-center';
+                        parent.appendChild(preview);
+                    }
+                    
+                    reader.onload = function(e) {
+                        preview.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview" class="h-20 w-auto rounded">
+                            <p class="ml-2 text-sm text-gray-500">New image preview</p>
+                        `;
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

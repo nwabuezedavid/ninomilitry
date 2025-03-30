@@ -1,0 +1,150 @@
+{% extends './base.html' %}
+
+{% block title %}NATO MILITARY - Home{% endblock %}
+
+{% block content %}
+
+
+
+<style>
+    * + a {
+        text-decoration: none  !important ;
+        color: white !important;
+    }
+</style>
+<div class="">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    {% include './s.html' %}
+    <!-- Hero Section -->
+    
+    <!-- Featured News -->
+    <section class="w-full flex  items-center mt-12 max-md:flex-col">
+        
+        <div class="w-1/2 max-md:w-full flex flex-col p-3 ">
+            <h1 class="text-3xl m-6 uppercase font-bold">About NATO Military </h1>
+            <p>The North Atlantic Treaty Organization (NATO) is an intergovernmental military alliance established on April 4, 1949. NATO was founded to provide collective defense against security threats and to maintain stability in the North Atlantic region. It is headquartered in Brussels, Belgium, and consists of 32 member countries, primarily from Europe and North America. The organization's core principle, enshrined in Article 5 of the NATO treaty, is that an attack against one member is considered an attack against all.</p>
+            
+            
+        </div>
+        <img class="w-1/2 max-md:w-full p-3" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQOqAfdYbV8e7Tfuz0AnkFvJIiYdpno5wgXg&s" alt="">
+    </section>
+    
+    <section class="container">
+        <center class="text-[43px] font-bold py-10">
+            HIGH RANKED OFFICERS
+        </center>
+        <div class="row">
+            {% for person in personnel_list %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    {% if person.photo %}
+                        <img src="{{ person.photo.url }}" class="card-img-top personnel-photo" alt="{{ person }}">
+                    
+                    {% elif person.url %}
+                        <img src="{{ person.url }}" class="card-img-top personnel-photo" alt="{{ person }}" style="object-fit: contain;">
+                    
+                        {% else %}
+                        <img src="https://shape.nato.int/resources/internal/file_views_listing/19553/10_estonia_.jpg" class="card-img-top personnel-photo" alt="No photo available">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ person.rank }} {{ person.first_name }} {{ person.last_name }}</h5>
+                        <p class="card-text">
+                            <strong>Country:</strong> {{ person.country }}<br>
+                            <strong>Years of Service:</strong> {{ person.years_of_service }}<br>
+                            <strong>Status:</strong> {% if person.is_active %}Active{% else %}Retired{% endif %}
+                        </p>
+                        <a href="{% url 'personnel_detail' person.id %}" class="btn btn-primary">View Profile</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No personnel found matching your criteria.
+                </div>
+            </div>
+            {% endfor %}
+        </div></section>
+    {% include './his.html' %}
+
+
+    <section>
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Featured Articles</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for post in featured_News %}
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+                        {% if post.featured_image %}
+                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                        {% else %}
+                            <img src="/placeholder.svg?height=200&width=400" alt="Placeholder" class="w-full h-48 object-cover">
+                        {% endif %}
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-gray-800">{{ post.title }}</h3>
+                            <p class="text-gray-600 mb-4">{{ post.content|truncatewords:25 }}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-500">By {{ post.author.username }}</span>
+                                <a href="{% url 'blog_detail' post.slug %}" class="text-blue-600 hover:text-blue-800 font-medium">Read More →</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-span-3 text-center py-10 bg-white rounded-lg shadow">
+                        <p class="text-black" style=" background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: white;">No featured News yet. Check back soon!</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+  
+    <!-- Recent News -->
+    <section>
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Recent Articles</h2>
+            <div class="space-y-4">
+                {% for post in recent_News %}
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col md:flex-row">
+                        <div class="md:w-1/4">
+                            {% if post.featured_image %}
+                                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-48 md:h-full object-cover">
+                            {% else %}
+                                <img src="/placeholder.svg?height=200&width=300" alt="Placeholder" class="w-full h-48 md:h-full object-cover">
+                            {% endif %}
+                        </div>
+                        <div class="p-6 md:w-3/4">
+                            <h3 class="text-xl font-bold mb-2 text-gray-800">{{ post.title }}</h3>
+                            <p class="text-gray-600 mb-4">{{ post.content|truncatewords:30 }}</p>
+                            <div class="flex items-center justify-between mt-auto">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500">By {{ post.author.username }}</span>
+                                    <span class="mx-2 text-gray-400">•</span>
+                                    <span class="text-sm text-gray-500">{{ post.published_date|date:"F j, Y" }}</span>
+                                </div>
+                                <a href="{% url 'blog_detail' post.slug %}" class="text-blue-600 hover:text-blue-800 font-medium">Read More →</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="text-center py-10 bg-white rounded-lg shadow">
+                        <p class="text-black" style=" background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: white;">No News yet. Check back soon!</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mt-6 text-center">
+                <a href="{% url 'blog_list' %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                    View All Articles
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Section -->
+   
+</div>
+{% endblock %}

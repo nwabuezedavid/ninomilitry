@@ -1,0 +1,170 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title %}Comment Detail - Admin{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Comment Detail</h1>
+        <div class="flex space-x-2">
+            <a href="{% url 'admin_comment_edit' comment.id %}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                Edit
+            </a>
+            <a href="{% url 'admin_comment_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
+                Back to Comments
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg overflow-hidden mb-6">
+        <div class="p-6">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center">
+                    {% if comment.author.profile.avatar %}
+                        <img src="{{ comment.author.profile.avatar.url }}" alt="{{ comment.author.username }}" class="h-10 w-10 rounded-full object-cover">
+                    {% else %}
+                        <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                            <span class="text-lg text-gray-600">{{ comment.author.username|first|upper }}</span>
+                        </div>
+                    {% endif %}
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">{{ comment.author.get_full_name|default:comment.author.username }}</p>
+                        <p class="text-xs text-gray-500">{{ comment.created_at|date:"F j, Y, g:i a" }}</p>
+                    </div>
+                </div>
+                <div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                        {% if comment.is_approved %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                        {{ comment.is_approved|yesno:"Approved,Pending" }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded mb-4">
+                <p class="text-gray-800">{{ comment.content|linebreaks }}</p>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-4">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Comment Details</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-gray-500">Post</p>
+                        <a href="{% url 'admin_post_detail' comment.post.id %}" class="text-blue-600 hover:underline">
+                            {{ comment.post.title }}
+                        </a>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">IP Address</p>
+                        <p class="text-gray-800">{{ comment.ip_address|default:"Not recorded" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Last Updated</p>
+                        <p class="text-gray-800">{{ comment.updated_at|date:"F j, Y, g:i a" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Moderation</p>
+                        <p class="text-gray-800">
+                            {% if comment.moderated_by %}
+                                Moderated by {{ comment.moderated_by.username }} on {{ comment.moderated_at|date:"F j, Y" }}
+                            {% else %}
+                                Not moderated
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 px-6 py-4 flex justify-between">
+            <div>
+                {% if not comment.is_approved %}
+                <a href="{% url 'admin_comment_approve' comment.id %}" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded mr-2">
+                    Approve
+                </a>
+                {% endif %}
+                <button type="button" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded" 
+                    onclick="document.getElementById('delete-modal').classList.remove('hidden')">
+                    Delete
+                </button>
+            </div>
+            
+            <div>
+                {% if comment.parent %}
+                <a href="{% url 'admin_comment_detail' comment.parent.id %}" class="text-blue-600 hover:underline">
+                    View Parent Comment
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    {% if comment.replies.exists %}
+    <div class="mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Replies ({{ comment.replies.count }})</h2>
+        
+        <div class="space-y-4">
+            {% for reply in comment.replies.all %}
+            <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                <div class="p-4">
+                    <div class="flex items-center mb-2">
+                        {% if reply.author.profile.avatar %}
+                            <img src="{{ reply.author.profile.avatar.url }}" alt="{{ reply.author.username }}" class="h-8 w-8 rounded-full object-cover">
+                        {% else %}
+                            <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
+                                <span class="text-sm text-gray-600">{{ reply.author.username|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">{{ reply.author.get_full_name|default:reply.author.username }}</p>
+                            <p class="text-xs text-gray-500">{{ reply.created_at|date:"F j, Y, g:i a" }}</p>
+                        </div>
+                        <div class="ml-auto">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                {% if reply.is_approved %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {{ reply.is_approved|yesno:"Approved,Pending" }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-800 text-sm">{{ reply.content }}</p>
+                    
+                    <div class="mt-2 flex justify-end space-x-2">
+                        <a href="{% url 'admin_comment_detail' reply.id %}" class="text-blue-600 hover:underline text-sm">View</a>
+                        <a href="{% url 'admin_comment_edit' reply.id %}" class="text-indigo-600 hover:underline text-sm">Edit</a>
+                        {% if not reply.is_approved %}
+                        <a href="{% url 'admin_comment_approve' reply.id %}" class="text-green-600 hover:underline text-sm">Approve</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg max-w-md w-full p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Deletion</h3>
+        <p class="text-gray-500 mb-6">Are you sure you want to delete this comment? This action cannot be undone.</p>
+        <div class="flex justify-end space-x-3">
+            <button type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded" 
+                onclick="document.getElementById('delete-modal').classList.add('hidden')">
+                Cancel
+            </button>
+            <form method="post" action="{% url 'admin_comment_delete' comment.id %}">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/admin/comment_detail.js' %}"></script>
+{% endblock %}

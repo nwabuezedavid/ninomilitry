@@ -1,0 +1,67 @@
+{% extends './base.html' %}
+
+{% block title %}NATO Military Personnel{% endblock %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="text-center mb-4">NATO Military Personnel</h1>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Filter by Country</h5>
+                <form method="get" class="row g-3">
+                    <div class="col-md-10">
+                        <select name="country" class="form-select">
+                            <option value="">All Countries</option>
+                            {% for country in countries %}
+                                <option value="{{ country.id }}" {% if selected_country == country.id|stringformat:"i" %}selected{% endif %}>
+                                    {{ country.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for person in personnel_list %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            {% if person.photo %}
+                <img src="{{ person.photo.url }}" class="card-img-top personnel-photo" alt="{{ person }}">
+            
+            {% elif person.url %}
+                <img src="{{ person.url }}" class="card-img-top personnel-photo" alt="{{ person }}" style="object-fit: contain;">
+            
+                {% else %}
+                <img src="https://via.placeholder.com/300x250?text=No+Photo" class="card-img-top personnel-photo" alt="No photo available">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ person.rank }} {{ person.first_name }} {{ person.last_name }}</h5>
+                <p class="card-text">
+                    <strong>Country:</strong> {{ person.country }}<br>
+                    <strong>Years of Service:</strong> {{ person.years_of_service }}<br>
+                    <strong>Status:</strong> {% if person.is_active %}Active{% else %}Retired{% endif %}
+                </p>
+                <a href="{% url 'personnel_detail' person.id %}" class="btn btn-primary">View Profile</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No personnel found matching your criteria.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

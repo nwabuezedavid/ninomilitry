@@ -1,0 +1,269 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Military Blog Admin{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'admin_dashboard' %}" class="text-xl font-bold">Military Blog Admin</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="hidden md:inline">Welcome, {{ request.user.username }}</span>
+                <a href="/" class="hover:text-gray-300" title="View Site"><i class="fas fa-globe"></i></a>
+                <a href="{% url 'logout' %}" class="hover:text-gray-300" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <aside class="bg-gray-900 text-white w-64 hidden md:block flex-shrink-0">
+            <nav class="p-4">
+                <div class="mb-8">
+                    <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-2">Main</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{% url 'admin_dashboard' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if request.resolver_match.url_name == 'admin_dashboard' %}bg-gray-800{% endif %}">
+                                <i class="fas fa-tachometer-alt w-5"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_statistics' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if request.resolver_match.url_name == 'admin_statistics' %}bg-gray-800{% endif %}">
+                                <i class="fas fa-chart-bar w-5"></i>
+                                <span>Statistics</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_activity_log' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if request.resolver_match.url_name == 'admin_activity_log' %}bg-gray-800{% endif %}">
+                                <i class="fas fa-history w-5"></i>
+                                <span>Activity Log</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-2">Content</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{% url 'admin_post_list' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if 'admin_post' in request.resolver_match.url_name %}bg-gray-800{% endif %}">
+                                <i class="fas fa-file-alt w-5"></i>
+                                <span>News</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_comment_list' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if 'admin_comment' in request.resolver_match.url_name %}bg-gray-800{% endif %}">
+                                <i class="fas fa-comments w-5"></i>
+                                <span>Comments</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-2">Users</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{% url 'admin_user_list' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if 'admin_user' in request.resolver_match.url_name %}bg-gray-800{% endif %}">
+                                <i class="fas fa-users w-5"></i>
+                                <span>Users</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_profile_list' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if 'admin_profile' in request.resolver_match.url_name %}bg-gray-800{% endif %}">
+                                <i class="fas fa-id-card w-5"></i>
+                                <span>Profiles</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-2">System</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="/admin/" class="flex items-center px-4 py-2 rounded hover:bg-gray-800">
+                                <i class="fas fa-cog w-5"></i>
+                                <span>Django Admin</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden fixed bottom-4 right-4 z-50">
+            <button id="mobile-menu-button" class="bg-gray-800 text-white p-3 rounded-full shadow-lg">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="fixed inset-0 bg-gray-900 bg-opacity-90 z-40 hidden flex-col text-white overflow-y-auto">
+            <div class="flex justify-end p-4">
+                <button id="close-mobile-menu" class="text-white text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="p-4">
+                <div class="mb-8">
+                    <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-2">Main</h3>
+                    <ul class="space-y-4">
+                        <li>
+                            <a href="{% url 'admin_dashboard' %}" class="flex items-center px-4 py-2">
+                                <i class="fas fa-tachometer-alt w-5"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_statistics' %}" class="flex items-center px-4 py-2">
+                                <i class="fas fa-chart-bar w-5"></i>
+                                <span>Statistics</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_activity_log' %}" class="flex items-center px-4 py-2">
+                                <i class="fas fa-history w-5"></i>
+                                <span>Activity Log</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-2">Content</h3>
+                    <ul class="space-y-4">
+                        <li>
+                            <a href="{% url 'admin_post_list' %}" class="flex items-center px-4 py-2">
+                                <i class="fas fa-file-alt w-5"></i>
+                                <span>News</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_comment_list' %}" class="flex items-center px-4 py-2">
+                                <i class="fas fa-comments w-5"></i>
+                                <span>Comments</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-2">Users</h3>
+                    <ul class="space-y-4">
+                        <li>
+                            <a href="{% url 'admin_user_list' %}" class="flex items-center px-4 py-2">
+                                <i class="fas fa-users w-5"></i>
+                                <span>Users</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin_profile_list' %}" class="flex items-center px-4 py-2">
+                                <i class="fas fa-id-card w-5"></i>
+                                <span>Profiles</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-2">System</h3>
+                    <ul class="space-y-4">
+                        <li>
+                            <a href="/admin/" class="flex items-center px-4 py-2">
+                                <i class="fas fa-cog w-5"></i>
+                                <span>Django Admin</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Content -->
+        <main class="flex-1 p-4 md:p-6 overflow-y-auto">
+            <!-- Breadcrumbs -->
+            <div class="mb-6">
+                <nav class="text-sm text-gray-500 mb-4">
+                    {% block breadcrumbs %}
+                    <a href="{% url 'admin_dashboard' %}" class="hover:text-gray-700">Dashboard</a>
+                    {% endblock %}
+                </nav>
+                
+                <!-- Page Title -->
+                <div class="flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-gray-800">{% block page_title %}Dashboard{% endblock %}</h1>
+                    {% block page_actions %}{% endblock %}
+                </div>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="p-4 mb-4 rounded-md {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Main Content -->
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>&copy; {% now "Y" %} Military Blog. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
+            mobileMenu.classList.add('flex');
+        });
+
+        closeMobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            mobileMenu.classList.remove('flex');
+        });
+
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

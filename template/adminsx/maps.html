@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ person.rank }} {{ person.first_name }} {{ person.last_name }} | NATO Military Personnel{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <a href="{% url 'personnel_detail' person.id %}" class="btn btn-secondary">&laquo; Back to Profile</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <h2>Confirm Deletion</h2>
+    </div>
+    <div class="card-body">
+        <p class="lead">Are you sure you want to delete the personnel record for <strong>{{ person.rank }} {{ person.first_name }} {{ person.last_name }}</strong>?</p>
+        <p class="text-danger">This action cannot be undone. All associated achievements and other data will be permanently deleted.</p>
+        
+        <div class="mt-4">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'personnel_detail' person.id %}" class="btn btn-secondary ms-2">No, Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

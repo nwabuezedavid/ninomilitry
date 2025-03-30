@@ -1,0 +1,273 @@
+{% extends "./base.html" %}
+
+{% block title %}{{ user_obj.username }} | Military Blog Admin{% endblock %}
+{% block page_title %}{{ user_obj.username }}{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'admin_dashboard' %}" class="hover:text-gray-700">Dashboard</a> &raquo; 
+<a href="{% url 'admin_user_list' %}" class="hover:text-gray-700">Users</a> &raquo; 
+{{ user_obj.username }}
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex space-x-2">
+    <a href="/admin/auth/user/{{ user_obj.id }}/change/" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">Edit User</a>
+    <form method="post" action="{% url 'admin_user_toggle_staff' pk=user_obj.id %}" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+            {% if user_obj.is_staff %}Remove Staff Status{% else %}Make Staff{% endif %}
+        </button>
+    </form>
+    <form method="post" action="{% url 'admin_user_toggle_active' pk=user_obj.id %}" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="{% if user_obj.is_active %}bg-red-500 hover:bg-red-600{% else %}bg-green-500 hover:bg-green-600{% endif %} text-white px-4 py-2 rounded-md">
+            {% if user_obj.is_active %}Deactivate{% else %}Activate{% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- User Details -->
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">User Details</h2>
+                
+                <div class="flex items-center mb-6">
+                    <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 mr-4">
+                        <i class="fas fa-user text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">{{ user_obj.username }}</h3>
+                        <div class="flex space-x-2 mt-1">
+                            {% if user_obj.is_active %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                            {% else %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
+                            {% endif %}
+                            
+                            {% if user_obj.is_staff %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Staff</span>
+                            {% endif %}
+                            
+                            {% if user_obj.is_superuser %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Superuser</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Email</p>
+                        <p class="font-medium">{{ user_obj.email }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Full Name</p>
+                        <p class="font-medium">
+                            {% if user_obj.first_name or user_obj.last_name %}
+                            {{ user_obj.first_name }} {{ user_obj.last_name }}
+                            {% else %}
+                            <span class="text-gray-400">Not provided</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Date Joined</p>
+                        <p class="font-medium">{{ user_obj.date_joined|date:"F d, Y H:i" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Last Login</p>
+                        <p class="font-medium">
+                            {% if user_obj.last_login %}
+                            {{ user_obj.last_login|date:"F d, Y H:i" }}
+                            {% else %}
+                            <span class="text-gray-400">Never</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <a href="{% url 'user_profile' username=user_obj.username %}" target="_blank" class="text-blue-500 hover:underline">
+                        <i class="fas fa-external-link-alt mr-1"></i> View public profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User News -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mt-6">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">News ({{ posts.count }})</h2>
+                    <a href="{% url 'admin_post_list' %}?author={{ user_obj.id }}" class="text-blue-500 hover:underline">View all</a>
+                </div>
+                
+                {% if News %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comments</th>
+                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for post in News %}
+                            <tr>
+                                <td class="py-2 px-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ post.title|truncatechars:40 }}</div>
+                                </td>
+                                <td class="py-2 px-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">{{ post.created_date|date:"M d, Y" }}</div>
+                                </td>
+                                <td class="py-2 px-4 whitespace-nowrap">
+                                    {% if post.published_date %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Published</span>
+                                    {% else %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Draft</span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-2 px-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">{{ post.comments.count }}</div>
+                                </td>
+                                <td class="py-2 px-4 whitespace-nowrap text-sm">
+                                    <a href="{% url 'admin_post_detail' pk=post.id %}" class="text-blue-500 hover:underline mr-2">View</a>
+                                    <a href="{% url 'admin_post_edit' pk=post.id %}" class="text-green-500 hover:underline">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-gray-500 text-center py-4">No News yet.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- User Comments -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden mt-6">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Comments ({{ comments.count }})</h2>
+                    <a href="{% url 'admin_comment_list' %}?author={{ user_obj.id }}" class="text-blue-500 hover:underline">View all</a>
+                </div>
+                
+                {% if comments %}
+                <div class="space-y-4">
+                    {% for comment in comments|slice:":5" %}
+                    <div class="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">{{ comment.text|truncatechars:100 }}</p>
+                                <p class="text-xs text-gray-500">On post: {{ comment.post.title|truncatechars:40 }}</p>
+                            </div>
+                            <div>
+                                {% if comment.approved %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
+                                {% else %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs text-gray-500">{{ comment.created_date|date:"F d, Y H:i" }}</p>
+                            <a href="{% url 'admin_comment_detail' pk=comment.id %}" class="text-xs text-blue-500 hover:underline">View</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-500 text-center py-4">No comments yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div>
+        <!-- Military Profile -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Military Profile</h2>
+            
+            {% if profile %}
+            <div class="mb-4">
+                {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="{{ user_obj.username }}" class="w-full h-auto rounded-md mb-4">
+                {% endif %}
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500">Branch</p>
+                    <p class="font-medium">{{ profile.get_branch_display }}</p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500">Rank</p>
+                    <p class="font-medium">{{ profile.rank }}</p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500">Years of Service</p>
+                    <p class="font-medium">{{ profile.years_of_service }}</p>
+                </div>
+                
+                {% if profile.bio %}
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Bio</p>
+                    <p class="text-sm">{{ profile.bio|linebreaks }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <a href="{% url 'admin_profile_detail' pk=profile.id %}" class="text-blue-500 hover:underline">View full profile</a>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">No military profile found.</p>
+            <a href="/admin/blog/militaryprofile/add/" class="block text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4">Create Profile</a>
+            {% endif %}
+        </div>
+        
+        <!-- User Stats -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">User Statistics</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-blue-50 p-4 rounded-md text-center">
+                    <p class="text-2xl font-bold text-blue-600">{{ posts.count }}</p>
+                    <p class="text-sm text-gray-600">News</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-md text-center">
+                    <p class="text-2xl font-bold text-green-600">{{ comments.count }}</p>
+                    <p class="text-sm text-gray-600">Comments</p>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <p class="text-sm text-gray-500 mb-1">Post Status</p>
+                <div class="flex items-center space-x-2">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                       
+                    </div>
+                    <span class="text-xs text-gray-500">{{ posts.published.count }}/{{ posts.count }} published</span>
+                </div>
+            </div>
+            
+            <div>
+                <p class="text-sm text-gray-500 mb-1">Comment Status</p>
+                <div class="flex items-center space-x-2">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                       
+                    </div>
+                    <span class="text-xs text-gray-500">{{ comments.approved.count }}/{{ comments.count }} approved</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

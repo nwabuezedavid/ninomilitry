@@ -1,0 +1,342 @@
+{% extends "./base.html" %}
+{% block title %}Statistics | Military Blog Admin{% endblock %}
+{% block page_title %}Statistics{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'admin_dashboard' %}" class="hover:text-gray-700">Dashboard</a> &raquo; Statistics
+{% endblock %}
+
+{% block content %}
+
+<!-- Time Period Filter -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">Time Period</h2>
+    <form method="get" class="flex flex-wrap gap-4">
+        <div class="flex items-center space-x-2">
+            <input type="radio" id="period_week" name="period" value="week" {% if period == 'week' %}checked{% endif %} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:ring-offset-0">
+            <label for="period_week" class="text-sm font-medium text-gray-700">Last 7 days</label>
+        </div>
+        <div class="flex items-center space-x-2">
+            <input type="radio" id="period_month" name="period" value="month" {% if period == 'month' %}checked{% endif %} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:ring-offset-0">
+            <label for="period_month" class="text-sm font-medium text-gray-700">Last 30 days</label>
+        </div>
+        <div class="flex items-center space-x-2">
+            <input type="radio" id="period_year" name="period" value="year" {% if period == 'year' %}checked{% endif %} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:ring-offset-0">
+            <label for="period_year" class="text-sm font-medium text-gray-700">Last 365 days</label>
+        </div>
+        <div class="flex items-center space-x-2">
+            <input type="radio" id="period_all" name="period" value="all" {% if period == 'all' %}checked{% endif %} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:ring-offset-0">
+            <label for="period_all" class="text-sm font-medium text-gray-700">All time</label>
+        </div>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">Apply</button>
+    </form>
+</div>
+
+<!-- Overview Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 text-blue-500 mr-4">
+                <i class="fas fa-file-alt text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Total News</p>
+                <p class="text-2xl font-bold">{{ total_News }}</p>
+            </div>
+        </div>
+        <div class="mt-4 flex justify-between items-center">
+            <span class="text-sm text-gray-500">Published: {{ published_News }}</span>
+            <span class="text-sm text-gray-500">Featured: {{ featured_News }}</span>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-100 text-green-500 mr-4">
+                <i class="fas fa-comments text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Total Comments</p>
+                <p class="text-2xl font-bold">{{ total_comments }}</p>
+            </div>
+        </div>
+        <div class="mt-4 flex justify-between items-center">
+            <span class="text-sm text-gray-500">Approved: {{ approved_comments }}</span>
+            <span class="text-sm text-gray-500">Pending: {{ total_comments  }}</span>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-100 text-purple-500 mr-4">
+                <i class="fas fa-users text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Total Users</p>
+                <p class="text-2xl font-bold">{{ total_users }}</p>
+            </div>
+        </div>
+        <div class="mt-4 flex justify-between items-center">
+            <span class="text-sm text-gray-500">Active: {{ active_users }}</span>
+            <span class="text-sm text-gray-500">Staff: {{ staff_users }}</span>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-100 text-yellow-500 mr-4">
+                <i class="fas fa-chart-line text-xl"></i>
+            </div>
+            <div>
+                <p class="text-gray-500 text-sm">Engagement</p>
+                <p class="text-2xl font-bold">{{ total_comments }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <span class="text-sm text-gray-500">Comments per post (average)</span>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- News by Month -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">News by Month</h2>
+        <div class="h-64">
+            <canvas id="postsByMonthChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Comments by Month -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Comments by Month</h2>
+        <div class="h-64">
+            <canvas id="commentsByMonthChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- News by Branch -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">News by Military Branch</h2>
+        <div class="h-64">
+            <canvas id="postsByBranchChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Real-time Data -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold text-gray-800">Real-time Activity</h2>
+            <button id="refreshRealTimeData" class="text-blue-500 hover:text-blue-700">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+        <div id="realTimeData" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="p-2 rounded-full bg-blue-100 text-blue-500 mr-3">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <span>News today</span>
+                </div>
+                <span id="postsToday" class="font-bold">Loading...</span>
+            </div>
+            <div class="flex items-center">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="p-2 rounded-full bg-green-100 text-green-500 mr-3">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <span>Comments today</span>
+                    </div>
+                    <span id="commentsToday" class="font-bold">Loading...</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="p-2 rounded-full bg-purple-100 text-purple-500 mr-3">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span>New users today</span>
+                    </div>
+                    <span id="usersToday" class="font-bold">Loading...</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="p-2 rounded-full bg-yellow-100 text-yellow-500 mr-3">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <span>Page views today</span>
+                    </div>
+                    <span id="viewsToday" class="font-bold">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    
+    {% block extra_js %}
+    <script>
+        // News by Month Chart
+        const postsByMonthCtx = document.getElementById('postsByMonthChart').getContext('2d');
+        const postsByMonthData = {
+            labels: [
+                {% for item in posts_by_month %}
+                    '{{ item.month }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Posts',
+                data: [
+                    {% for item in posts_by_month %}
+                        {{ item.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                tension: 0.4
+            }]
+        };
+        
+        const postsByMonthChart = new Chart(postsByMonthCtx, {
+            type: 'line',
+            data: postsByMonthData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Comments by Month Chart
+        const commentsByMonthCtx = document.getElementById('commentsByMonthChart').getContext('2d');
+        const commentsByMonthData = {
+            labels: [
+                {% for item in comments_by_month %}
+                    '{{ item.month }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Comments',
+                data: [
+                    {% for item in comments_by_month %}
+                        {{ item.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                tension: 0.4
+            }]
+        };
+        
+        const commentsByMonthChart = new Chart(commentsByMonthCtx, {
+            type: 'line',
+            data: commentsByMonthData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+        
+        // News by Branch Chart
+        const postsByBranchCtx = document.getElementById('postsByBranchChart').getContext('2d');
+        const postsByBranchData = {
+            labels: [
+                {% for item in posts_by_branch %}
+                    '{{ item.branch|default:"Not specified"|title }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Posts',
+                data: [
+                    {% for item in posts_by_branch %}
+                        {{ item.count }},
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+        
+        const postsByBranchChart = new Chart(postsByBranchCtx, {
+            type: 'pie',
+            data: postsByBranchData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 12
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Real-time data
+        function fetchRealTimeData() {
+            fetch('{% url "admin_ajax_post_stats" %}')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('postsToday').textContent = data.posts_today;
+                    document.getElementById('commentsToday').textContent = data.comments_today;
+                    document.getElementById('usersToday').textContent = data.users_today;
+                    document.getElementById('viewsToday').textContent = data.views_today;
+                })
+                .catch(error => {
+                    console.error('Error fetching real-time data:', error);
+                });
+        }
+        
+        // Initial fetch
+        fetchRealTimeData();
+        
+        // Refresh button
+        document.getElementById('refreshRealTimeData').addEventListener('click', function() {
+            // Show loading state
+            document.getElementById('postsToday').textContent = 'Loading...';
+            document.getElementById('commentsToday').textContent = 'Loading...';
+            document.getElementById('usersToday').textContent = 'Loading...';
+            document.getElementById('viewsToday').textContent = 'Loading...';
+            
+            // Fetch data
+            fetchRealTimeData();
+        });
+    </script>
+    {% endblock %}

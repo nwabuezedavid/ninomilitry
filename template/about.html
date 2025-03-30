@@ -1,0 +1,228 @@
+{% extends './base.html' %}
+
+{% block title %}{{ post.title }} | NATO MILITARY{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom Styles for Military Excellence Website */
+
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.animate-fade-in-delay {
+  animation: fadeIn 1s ease-in-out 0.3s;
+  animation-fill-mode: both;
+}
+
+.animate-fade-in-delay-2 {
+  animation: fadeIn 1s ease-in-out 0.6s;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slideshow Styles */
+.slideshow-container {
+  position: relative;
+  margin: auto;
+}
+
+.slide {
+  display: none;
+  animation: fade 1.5s;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slide.active {
+  display: block;
+}
+
+/* Page Transitions */
+.page-transition {
+  animation: pageTransition 0.5s ease-in-out;
+}
+
+@keyframes pageTransition {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #047857;
+}
+
+/* FAQ Accordion Styles */
+.faq-question.active i {
+  transform: rotate(180deg);
+}
+
+
+</style>
+<main>
+<section class="relative h-[400px] bg-cover  center" style="background-image: url('https://www.nato.int/nato_static_fl2014/assets/pictures/images_mfu/2022/7/14a-dgims/220714a-dgims-003_rdax_775x440s.jpg')">
+    <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+    <div class="container mx-auto px-4 h-full flex items-center justify-center relative z-10">
+        <div class="text-center text-white">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">ABOUT US</h2>
+            <p class="text-xl max-w-2xl mx-auto animate-fade-in-delay">The North Atlantic Treaty Organization (NATO) is an intergovernmental military alliance established on April 4, 1949. NATO was founded to provide collective defense against security threats and to maintain stability in the North Atlantic region. It is headquartered in Brussels, Belgium, and consists of 32 member countries, primarily from Europe and North America. The organization's core principle, enshrined in Article 5 of the NATO treaty, is that an attack against one member is considered an attack against all.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Our Mission -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">OUR MISSION</h2>
+                <p class="text-gray-600 mb-4">The North Atlantic Treaty Organization (NATO) is an intergovernmental military alliance established on April 4, 1949. NATO was founded to provide collective defense against security threats and to maintain stability in the North Atlantic region. It is headquartered in Brussels, Belgium, and consists of 32 member countries, primarily from Europe and North America. The organization's core principle, enshrined in Article 5 of the NATO treaty, is that an attack against one member is considered an attack against all.</p>
+                </div>
+            <div class="md:w-1/2">
+                <img src="https://live.staticflickr.com/3667/12698910715_fdd986f14e_b.jpg" alt="Military Mission" class="rounded-lg shadow-lg w-full h-auto" onerror="this.src='https://www.politico.com/dims4/default/1b0874f/2147483647/strip/true/crop/2320x1546+0+0/resize/1159x772!/quality/90/?url=https%3A%2F%2Fstatic.politico.com%2F3e%2Fd7%2Fd529d28e46cf9971129dff923885%2Fpolitico-general-miller-final.jpg'">
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include './his.html' %}
+
+
+<!-- Leadership Team -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">OUR LEADERSHIP</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Leader 1 -->
+            <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
+                <img src="https://shape.nato.int/resources/3/bios/NMR/usa.jpg" alt="General Robert Thompson" class="w-full h-[500px] object-fill  " onerror="this.src='https://via.placeholder.com/400x300?text=General+Robert+Thompson'">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-2">General Robert Thompson</h3>
+                    <p class="text-gray-600 mb-4">Commander-in-Chief</p>
+                    <p class="text-gray-700">With over 35 years of distinguished service, General Thompson brings unparalleled leadership and strategic vision to our organization.</p>
+                </div>
+            </div>
+            
+            <!-- Leader 2 -->
+            <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
+                <img src="https://media.istockphoto.com/id/155391960/photo/caucasian-naval-officer-standing-at-attention-outside.jpg?s=612x612&w=0&k=20&c=XpuS_rhFZDX67alNJ-LrSAY50z24bUz9G3vM3cGZlPw=" alt="Admiral Elizabeth Chen" class="w-full h-[500px] object-fill" onerror="this.src='https://via.placeholder.com/400x300?text=Admiral+Elizabeth+Chen'">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-2">Admiral Elizabeth Chen</h3>
+                    <p class="text-gray-600 mb-4">Naval Operations Director</p>
+                    <p class="text-gray-700">Admiral Chen has revolutionized our naval strategy and operations, implementing innovative approaches to maritime security.</p>
+                </div>
+            </div>
+            
+            <!-- Leader 3 -->
+            <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md transform hover:scale-105 transition-transform duration-300">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjIGgesWn81tEmP_saWfr_685XytyT7g-X5Q&s" alt="Colonel James Rodriguez" class="w-full h-[500px] object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=Colonel+James+Rodriguez'">
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-2">Colonel James Rodriguez</h3>
+                    <p class="text-gray-600 mb-4">Special Operations Commander</p>
+                    <p class="text-gray-700">Colonel Rodriguez leads our elite special operations teams with a focus on precision, excellence, and mission success in complex environments.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Values -->
+<section class="py-16 bg-gray-100">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">OUR CORE VALUES</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                <div class="text-green-600 text-4xl mb-4">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">HONOR</h3>
+                <p class="text-gray-600">We uphold the highest standards of moral and ethical conduct in all our actions.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                <div class="text-green-600 text-4xl mb-4">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">INTEGRITY</h3>
+                <p class="text-gray-600">We are committed to honesty, transparency, and doing what is right even when no one is watching.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                <div class="text-green-600 text-4xl mb-4">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">SERVICE</h3>
+                <p class="text-gray-600">We dedicate ourselves to serving our nation and its people with selflessness and commitment.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                <div class="text-green-600 text-4xl mb-4">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">EXCELLENCE</h3>
+                <p class="text-gray-600">We strive for the highest standards of performance in everything we do.</p>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animation for comments
+    document.addEventListener('DOMContentLoaded', function() {
+        const comments = document.querySelectorAll('.animate-fadeIn');
+        comments.forEach((comment, index) => {
+            comment.style.opacity = '0';
+            comment.style.transform = 'translateY(20px)';
+            comment.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            
+            setTimeout(() => {
+                comment.style.opacity = '1';
+                comment.style.transform = 'translateY(0)';
+            }, 100 * index);
+        });
+    });
+</script>
+{% endblock %}

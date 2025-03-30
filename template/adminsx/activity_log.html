@@ -1,0 +1,154 @@
+{% extends "./base.html" %}
+
+{% block title %}Activity Log | Military Blog Admin{% endblock %}
+{% block page_title %}Activity Log{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'admin_dashboard' %}" class="hover:text-gray-700">Dashboard</a> &raquo; Activity Log
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">Filters</h2>
+    <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+            <label for="action_type" class="block text-sm font-medium text-gray-700 mb-1">Action Type</label>
+            <select id="action_type" name="action_type" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                <option value="">All Actions</option>
+                <option value="create" {% if current_action_type == 'create' %}selected{% endif %}>Create</option>
+                <option value="update" {% if current_action_type == 'update' %}selected{% endif %}>Update</option>
+                <option value="delete" {% if current_action_type == 'delete' %}selected{% endif %}>Delete</option>
+                <option value="login" {% if current_action_type == 'login' %}selected{% endif %}>Login</option>
+                <option value="logout" {% if current_action_type == 'logout' %}selected{% endif %}>Logout</option>
+            </select>
+        </div>
+        
+        <div>
+            <label for="content_type" class="block text-sm font-medium text-gray-700 mb-1">Content Type</label>
+            <select id="content_type" name="content_type" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                <option value="">All Types</option>
+                <option value="post" {% if current_content_type == 'post' %}selected{% endif %}>Post</option>
+                <option value="comment" {% if current_content_type == 'comment' %}selected{% endif %}>Comment</option>
+                <option value="user" {% if current_content_type == 'user' %}selected{% endif %}>User</option>
+                <option value="profile" {% if current_content_type == 'profile' %}selected{% endif %}>Profile</option>
+            </select>
+        </div>
+        
+        <div>
+            <label for="user" class="block text-sm font-medium text-gray-700 mb-1">User</label>
+            <select id="user" name="user" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                <option value="">All Users</option>
+                {% for user in users %}
+                <option value="{{ user.id }}" {% if current_user == user.id|stringformat:"s" %}selected{% endif %}>{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div>
+            <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+            <div class="relative">
+                <input type="text" id="search" name="search" value="{{ search_query }}" placeholder="Search logs..." class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 pl-10">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="md:col-span-2 lg:col-span-4 flex justify-end">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mr-2">Apply Filters</button>
+            <a href="{% url 'admin_activity_log' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md">Reset</a>
+        </div>
+    </form>
+</div>
+
+<!-- Activity Log Table -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Content Type</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Content ID</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for log in page_obj %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ log.timestamp|date:"M d, Y H:i:s" }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ log.user.username }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            {% if log.action_type == 'create' %}bg-green-100 text-green-800
+                            {% elif log.action_type == 'update' %}bg-blue-100 text-blue-800
+                            {% elif log.action_type == 'delete' %}bg-red-100 text-red-800
+                            {% elif log.action_type == 'login' %}bg-purple-100 text-purple-800
+                            {% elif log.action_type == 'logout' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ log.action_type|title }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ log.content_type|title }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ log.content_id|default:"-" }}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900">{{ log.description|truncatechars:50 }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">{{ log.ip_address }}</div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">No activity logs found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="bg-white rounded-lg shadow-md p-4 mt-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <p class="text-sm text-gray-700">
+                Showing <span class="font-medium">{{ page_obj.start_index }}</span> to <span class="font-medium">{{ page_obj.end_index }}</span> of <span class="font-medium">{{ page_obj.paginator.count }}</span> logs
+            </p>
+        </div>
+        <div>
+            <nav class="flex items-center">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_action_type %}&action_type={{ current_action_type }}{% endif %}{% if current_content_type %}&content_type={{ current_content_type }}{% endif %}{% if current_user %}&user={{ current_user }}{% endif %}" class="px-3 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 mr-2">Previous</a>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="px-3 py-1 rounded-md bg-blue-500 text-white mr-2">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_action_type %}&action_type={{ current_action_type }}{% endif %}{% if current_content_type %}&content_type={{ current_content_type }}{% endif %}{% if current_user %}&user={{ current_user }}{% endif %}" class="px-3 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 mr-2">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_action_type %}&action_type={{ current_action_type }}{% endif %}{% if current_content_type %}&content_type={{ current_content_type }}{% endif %}{% if current_user %}&user={{ current_user }}{% endif %}" class="px-3 py-1 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">Next</a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
