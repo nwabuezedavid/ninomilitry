@@ -124,7 +124,7 @@ def create_initial_data():
             'years_of_service': 35,
             'service_start_date': datetime.date(1988, 6, 1),
             'is_active': True,
-            'awards': [medal_of_honor, silver_star, legion_of_merit],
+          'awards': random_awards(),
             'url': image_urls[1],
         },
         {
