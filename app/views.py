@@ -15,7 +15,7 @@ from .new import *
 def home(request):
     featured_posts = BlogPost.objects.filter(is_featured=True, published_date__lte=timezone.now()).order_by('-published_date')[:3]
     recent_posts = BlogPost.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')[:5]
-    fetch_and_save_military_news()
+    # fetch_and_save_military_news()
     personnel_list = Personnel.objects.all()[:6]
     countries = Country.objects.all()
     # Filter by country if specified
@@ -202,7 +202,7 @@ def search(request):
 
 
 def blog_list(request):
-    posts_list = BlogPost.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+    posts_list = BlogPost.objects.filter( ).order_by('-published_date')
     query = request.GET.get('q')
     
     if query:
