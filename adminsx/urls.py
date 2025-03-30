@@ -53,7 +53,7 @@ path('user_profile/<str:username>/', views.user_profile, name='user_profile'),
 
 
 
-    path('peranl', views.phome, name='phome'),
+    path('peranl/', views.phome, name='phome'),
     path('personnel/<int:pk>/', views.personnel_detail, name='personnel_detail'),
     path('personnel/create/', views.personnel_create, name='personnel_create'),
     path('personnel/<int:pk>/update/', views.personnel_update, name='personnel_update'),

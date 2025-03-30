@@ -49,9 +49,9 @@
                         <img src="https://shape.nato.int/resources/internal/file_views_listing/19553/10_estonia_.jpg" class="card-img-top personnel-photo" alt="No photo available">
                     {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">{{ person.rank }} {{ person.first_name }} {{ person.last_name }}</h5>
+                        <h5 class="card-title">{{ person.first_name }} {{ person.last_name }}</h5>
                         <p class="card-text">
-                            <strong>Country:</strong> {{ person.country }}<br>
+                            <strong class="flex items-center gap-3">Country: <img src="https://flagsapi.com/{{ person.country.names }}/flat/64.png" class="w-4 h-4" alt=""> </strong> {{ person.country }}<br>
                             <strong>Years of Service:</strong> {{ person.years_of_service }}<br>
                             <strong>Status:</strong> {% if person.is_active %}Active{% else %}Retired{% endif %}
                         </p>

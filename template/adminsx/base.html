@@ -11,16 +11,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     
     {% block extra_css %}{% endblock %}
 </head>
+<style>
+    *{
+        text-decoration: none !important ;
+       
+    }
+    a{
+        color: white;
+    }
+</style>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Header -->
     <header class="bg-gray-800 text-white shadow-md">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <a href="{% url 'admin_dashboard' %}" class="text-xl font-bold">Military Blog Admin</a>
+                <a href="{% url 'admin_dashboard' %}" class="text-xl font-bold">dashboard</a>
             </div>
             <div class="flex items-center space-x-4">
                 <span class="hidden md:inline">Welcome, {{ request.user.username }}</span>
@@ -48,6 +56,12 @@
                             <a href="{% url 'admin_statistics' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if request.resolver_match.url_name == 'admin_statistics' %}bg-gray-800{% endif %}">
                                 <i class="fas fa-chart-bar w-5"></i>
                                 <span>Statistics</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'phome' %}" class="flex items-center px-4 py-2 rounded hover:bg-gray-800 {% if request.resolver_match.url_name == 'admin_statistics' %}bg-gray-800{% endif %}">
+                                <i class="fas fa-chart-bar w-5"></i>
+                                <span>Personal </span>
                             </a>
                         </li>
                         <li>

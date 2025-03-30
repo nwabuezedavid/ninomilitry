@@ -22,7 +22,7 @@ def random_country():
     return random.choice(all_ranks) if all_ranks else None  # Returns None if no ranks exist
 
 def create_initial_data():
-    # Create ranks
+    # Create ranks 
     ranks = [
         {'name': 'General', 'abbreviation': 'GEN'},
         {'name': 'Lieutenant General', 'abbreviation': 'LTG'},
@@ -36,8 +36,8 @@ def create_initial_data():
     ]
     
     for rank in ranks:
-        duplicates = Rank.objects.filter(name=rank['name'], abbreviation=rank['abbreviation'])
-        if duplicates.count() > 1:
+        duplicates ,ee = Rank.objects.get_or_create(name=rank['name'], abbreviation=rank['abbreviation'])
+        if Rank.objects.filter(name=rank['name'], abbreviation=rank['abbreviation']).count() > 1:
             # Keep the first entry and delete the rest
             first_entry = duplicates.first()
             duplicates.exclude(id=first_entry.id).delete()

@@ -1,10 +1,10 @@
 {% extends './base.html' %}
 
-{% block title %}{{ person.rank }} {{ person.first_name }} {{ person.last_name }} | NATO Military Personnel{% endblock %}
+{% block title %}{{ person.rank }} {{ person.first_name }} {{ person.last_name }} | NATO  MILITARY OFFICERS{% endblock %}
 
 {% block content %}
  <section class="flex w-full flex-col">
-<div class="row " style="margin-top: 33px;">
+<div class="  " style="margin-top: 33px;">
     <div class="col-md-12 mb-4">
         <a href="{% url 'personnel' %}" class="btn btn-danger">&laquo; Back to Personnel List</a>
     </div>
@@ -12,7 +12,7 @@
 
 <div class="row">
     <div class="col-md-4">
-        <div class="card mb-4">
+        <div class="card mb-4 items-center flex flex-col " >
             {% if person.photo %}
                 <img src="{{ person.photo.url }}" style="object-fit: contain; padding: 22px;" class="card-img-top personnel-photo object-fit " alt="{{ person }}">
             {% elif person.url %}
@@ -29,7 +29,7 @@
                     {% endif %}
                     {{ person.country.name }}
                 </p>
-                <p class="card-text">
+                <p class="card-text ">
                     <strong>Date of Birth:</strong> {{ person.date_of_birth|date:"F j, Y" }}<br>
                     <strong>Years of Service:</strong> {{ person.years_of_service }}<br>
                     <strong>Service Period:</strong> {{ person.service_start_date|date:"Y" }} - 

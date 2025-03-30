@@ -1118,7 +1118,7 @@ def personnel_update(request, pk):
         'title': f'Update Record: {person.rank} {person.first_name} {person.last_name}',
         'button_text': 'Update Record'
     }
-    return render(request, 'adminsx/personeal.htmll', context)
+    return render(request, 'adminsx/personeal.html', context)
 
 @login_required
 def personnel_delete(request, pk):

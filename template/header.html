@@ -16,11 +16,14 @@
                 <a style="text-decoration: none !important;" href="{% url 'home' %}" class="hover:text-gray-300 transition-colors">Home</a>
             <a href="{% url 'personnel' %}" class="block py-2 hover:bg-gray-700 px-3 rounded transition-colors">Militray Personnel</a>
                
-                <a style="text-decoration: none !important;" href="{% url 'blog_list' %}" class="hover:text-gray-300 transition-colors">News</a>
+                <a style="text-decoration: none !important; color: aliceblue;" href="{% url 'blog_list' %}" class="hover:text-gray-300 transition-colors">News</a>
                 <a style="text-decoration: none !important;" href="{% url 'about' %}" class="hover:text-gray-300 transition-colors">About Us</a>
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and not user.is_superuser %}
                     <a style="text-decoration: none !important;" href="{% url 'create_post' %}" class="hover:text-gray-300 transition-colors">New Post</a>
                     <a style="text-decoration: none !important;" href="{% url 'profile' %}" class="hover:text-gray-300 transition-colors">Profile</a>
+                    <a style="text-decoration: none !important;" href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md transition-colors">Logout</a>
+                {%  elif user.is_authenticated and  user.is_superuser %}
+                    <a style="text-decoration: none !important;" href="{% url 'admin_dashboard' %}" class="hover:text-gray-300 transition-colors">admin profile</a>
                     <a style="text-decoration: none !important;" href="{% url 'logout' %}" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md transition-colors">Logout</a>
                 {% else %}
                     <a style="text-decoration: none !important;" href="{% url 'login' %}" class="hover:text-gray-300 transition-colors">Login</a>

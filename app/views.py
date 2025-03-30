@@ -20,8 +20,17 @@ def home(request):
     countries = Country.objects.all()
     # Filter by country if specified
     country_id = request.GET.get('country')
-    if country_id:
+    name = request.GET.get('name')
+
+    if country_id  :
         personnel_list = personnel_list.filter(country_id=country_id)
+    
+    if   name:
+        if personnel_list.filter(first_name=name).exists():
+            personnel_list = personnel_list.filter(first_name=name)
+        if personnel_list.filter(last_name=name).exists():
+        
+            personnel_list = personnel_list.filter(last_name=first_name)
     
     
     return render(request, './home.html', {
@@ -235,11 +244,21 @@ def logoutuser(request):
 def personnel(request):
     personnel_list = Personnel.objects.all()
     countries = Country.objects.all()
+    # create_initial_data()
     # Filter by country if specified
     country_id = request.GET.get('country')
-    if country_id:
+     
+    name = request.GET.get('name')
+
+    if country_id  :
         personnel_list = personnel_list.filter(country_id=country_id)
     
+    if   name:
+        if personnel_list.filter(first_name=name).exists():
+            personnel_list = personnel_list.filter(first_name=name)
+        if personnel_list.filter(last_name=name).exists():
+        
+            personnel_list = personnel_list.filter(last_name=first_name)
     context = {
         'personnel_list': personnel_list,
         'countries': countries,
@@ -257,4 +276,9 @@ def personnel_detail(request, pk):
         'achievements': achievements,
         'awards': awards
     }
-    return render(request, 'personnel/detail.html', context)    
+    return render(request, 'personnel/details.html', context)    
+
+
+
+
+    

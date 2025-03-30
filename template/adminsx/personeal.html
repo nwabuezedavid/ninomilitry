@@ -1,213 +1,139 @@
 {% extends './base.html' %}
 {% load static %}
 
-{% block title %}{{ title }} | NATO Military Personnel{% endblock %}
-
-{% block extra_css %}
-<style>
-    .achievement-form {
-        background-color: #f8f9fa;
-        padding: 15px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-        border: 1px solid #dee2e6;
-    }
-    .delete-row {
-        color: #dc3545;
-        cursor: pointer;
-    }
-    .add-row {
-        margin-top: 10px;
-    }
-</style>
-{% endblock %}
+{% block title %}{{ title }} | NATO MILITARY OFFICERS{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 mb-4">
-        <a href="{% if person %}{% url 'personnel_detail' person.id %}{% else %}{% url 'home' %}{% endif %}" class="btn btn-secondary">&laquo; Back</a>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h2>{{ title }}</h2>
-    </div>
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data" novalidate>
+<div class="max-w-5xl mx-auto p-4">
+    <a href="{% if person %}{% url 'personnel_detail' person.id %}{% else %}{% url 'home' %}{% endif %}" 
+       class="inline-block bg-gray-700 text-white px-4 py-2 rounded-md mb-4">&laquo; Back</a>
+    
+    <div class="bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-4">{{ title }}</h2>
+        <style>
+           input, textarea{
+            width: 100% !important;
+            background-color: gray !important;
+            padding: 22px !important;
+           }
+        </style>
+        <form method="post" class="space-y-4 *:w-full *:p-2" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
             
             {% if form.non_field_errors %}
-            <div class="alert alert-danger">
+            <div class="bg-red-100 text-red-700 p-2 rounded">
                 {% for error in form.non_field_errors %}
                     {{ error }}
                 {% endfor %}
             </div>
             {% endif %}
             
-            <div class="row">
-                <div class="col-md-6">
-                    <h4 class="mb-3">Personal Information</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h4 class="text-lg font-medium text-gray-800">Personal Information</h4>
                     
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
-                            {{ form.first_name.errors }}
-                            {{ form.first_name }}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
-                            {{ form.last_name.errors }}
-                            {{ form.last_name }}
-                        </div>
-                    </div>
+                    <label class="block text-gray-700">First Name</label>
+                    {{ form.first_name.errors }}
+                    {{ form.first_name }}
                     
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.rank.id_for_label }}" class="form-label">Rank</label>
-                            {{ form.rank.errors }}
-                            {{ form.rank  }}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
-                            {{ form.country.errors }}
-                            {{ form.country }}
-                        </div>
-                    </div>
+                    <label class="block text-gray-700">Last Name</label>
+                    {{ form.last_name.errors }}
+                    {{ form.last_name }}
                     
-                    <div class="mb-3">
-                        <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
-                        {{ form.date_of_birth.errors }}
-                        {{ form.date_of_birth  }}
-                    </div>
+                    <label class="block text-gray-700">Rank</label>
+                    {{ form.rank.errors }}
+                    {{ form.rank }}
                     
-                    <div class="mb-3">
-                        <label for="{{ form.photo.id_for_label }}" class="form-label">Photo</label>
-                        {{ form.photo.errors }}
-                        {{ form.photo  }}
-                        {% if person.photo %}
-                            <div class="mt-2">
-                                <img src="{{ person.photo.url }}" alt="Current photo" style="max-width: 100px; max-height: 100px;">
-                                <p class="text-muted">Current photo</p>
-                            </div>
-                        {% endif %}
+                    <label class="block text-gray-700">Country</label>
+                    {{ form.country.errors }}
+                    {{ form.country }}
+                    
+                    <label class="block text-gray-700">Date of Birth</label>
+                    {{ form.date_of_birth.errors }}
+                    {{ form.date_of_birth }}
+                    
+                    <label class="block text-gray-700">Photo</label>
+                    {{ form.photo.errors }}
+                    {{ form.photo }}
+                    {% if person.photo %}
+                    <div class="mt-2">
+                        <img src="{{ person.photo.url }}" alt="Current photo" style="max-width: 100px; max-height: 100px;">
+                        <p class="text-muted">Current photo</p>
                     </div>
+                {% elif person.url %}
+                    <div class="mt-2">
+                        <img src="{{ person.url }}" alt="Current photo" style="max-width: 100px; max-height: 100px;">
+                        <p class="text-muted">Current photo</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
                 </div>
                 
-                <div class="col-md-6">
-                    <h4 class="mb-3">Service Information</h4>
+                <div>
+                    <h4 class="text-lg font-medium text-gray-800">Service Information</h4>
                     
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.years_of_service.id_for_label }}" class="form-label">Years of Service</label>
-                            {{ form.years_of_service.errors }}
-                            {{ form.years_of_service  }}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.is_active.id_for_label }}" class="form-label">Active Status</label>
-                            {{ form.is_active.errors }}
-                            <div class="form-check mt-2">
-                                {{ form.is_active }}
-                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
-                                    Currently Active
-                                </label>
-                            </div>
-                        </div>
+                    <label class="block text-gray-700">Years of Service</label>
+                    {{ form.years_of_service.errors }}
+                    {{ form.years_of_service }}
+                    
+                    <label class="block text-gray-700">Active Status</label>
+                    {{ form.is_active.errors }}
+                    <div class="flex items-center gap-2">
+                        {{ form.is_active }}
+                        <label class="text-gray-700">Currently Active</label>
                     </div>
                     
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.service_start_date.id_for_label }}" class="form-label">Service Start Date</label>
-                            {{ form.service_start_date.errors }}
-                            {{ form.service_start_date  }}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.service_end_date.id_for_label }}" class="form-label">Service End Date</label>
-                            {{ form.service_end_date.errors }}
-                            {{ form.service_end_date  }}
-                            <small class="text-muted">Leave blank if still active</small>
-                        </div>
-                    </div>
+                    <label class="block text-gray-700">Service Start Date</label>
+                    {{ form.service_start_date.errors }}
+                    {{ form.service_start_date }}
                     
-                    <div class="mb-3">
-                        <label for="{{ form.awards.id_for_label }}" class="form-label">Awards</label>
-                        {{ form.awards.errors }}
-                        <div class="border p-3 rounded" style="max-height: 200px; overflow-y: auto;">
-                            {{ form.awards }}
-                        </div>
-                    </div>
+                    <label class="block text-gray-700">Service End Date</label>
+                    {{ form.service_end_date.errors }}
+                    {{ form.service_end_date }}
+                    <small class="text-gray-500">Leave blank if still active</small>
                 </div>
             </div>
             
-            <div class="mb-3">
-                <label for="{{ form.biography.id_for_label }}" class="form-label">Biography</label>
-                {{ form.biography.errors }}
-                {{ form.biography  }}
-            </div>
+            <label class="block text-gray-700">Biography</label>
+            {{ form.biography.errors }}
+            {{ form.biography }}
             
-            <h4 class="mt-4 mb-3">Achievements</h4>
+            <h4 class="text-lg font-medium text-gray-800">Achievements</h4>
             {{ achievement_formset.management_form }}
             
-            <div id="achievement-forms">
+            <div class="space-y-3">
                 {% for achievement_form in achievement_formset %}
-                    <div class="achievement-form">
-                        {% if achievement_form.instance.pk %}{{ achievement_form.DELETE }}{% endif %}
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="mb-3">
-                                    <label for="{{ achievement_form.title.id_for_label }}" class="form-label">Title</label>
-                                    {{ achievement_form.title.errors }}
-                                    {{ achievement_form.title  }}
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="{{ achievement_form.date.id_for_label }}" class="form-label">Date</label>
-                                    {{ achievement_form.date.errors }}
-                                    {{ achievement_form.date  }}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="{{ achievement_form.description.id_for_label }}" class="form-label">Description</label>
-                            {{ achievement_form.description.errors }}
-                            {{ achievement_form.description  }}
-                        </div>
-                        
-                        {% if achievement_form.instance.pk %}
-                            <div class="text-end">
-                                <label class="form-check-label delete-row">
-                                    <input type="checkbox" name="{{ achievement_form.DELETE.html_name }}" id="{{ achievement_form.DELETE.id_for_label }}" class="form-check-input">
-                                    Delete this achievement
-                                </label>
-                            </div>
-                        {% endif %}
+                <div class="p-4 border rounded bg-gray-50">
+                    <label class="block text-gray-700">Title</label>
+                    {{ achievement_form.title.errors }}
+                    {{ achievement_form.title }}
+                    
+                    <label class="block text-gray-700">Date</label>
+                    {{ achievement_form.date.errors }}
+                    {{ achievement_form.date }}
+                    
+                    <label class="block text-gray-700">Description</label>
+                    {{ achievement_form.description.errors }}
+                    {{ achievement_form.description }}
+                    
+                    {% if achievement_form.instance.pk %}
+                    <div class="mt-2 flex items-center gap-2">
+                        {{ achievement_form.DELETE }}
+                        <label class="text-red-600">Delete this achievement</label>
                     </div>
+                    {% endif %}
+                </div>
                 {% endfor %}
             </div>
             
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary">{{ button_text }}</button>
-                <a href="{% if person %}{% url 'personnel_detail' person.id %}{% else %}{% url 'home' %}{% endif %}" class="btn btn-secondary ms-2">Cancel</a>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg">{{ button_text }}</button>
+                <a href="{% if person %}{% url 'personnel_detail' person.id %}{% else %}{% url 'home' %}{% endif %}" 
+                   class="ml-2 text-gray-600 underline">Cancel</a>
             </div>
         </form>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    // Add a custom widget for the formset
-    document.addEventListener('DOMContentLoaded', function() {
-        // Hide the DELETE field labels
-        const deleteCheckboxes = document.querySelectorAll('input[name$="-DELETE"]');
-        deleteCheckboxes.forEach(function(checkbox) {
-            const label = checkbox.parentNode;
-            if (label.tagName === 'LABEL') {
-                label.style.display = 'inline-block';
-            }
-        });
-    });
-</script>
 {% endblock %}
