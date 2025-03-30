@@ -18,7 +18,6 @@ def home(request):
     
     personnel_list = Personnel.objects.all()[:6]
     countries = Country.objects.all()
-    create_initial_data()
     # Filter by country if specified
     country_id = request.GET.get('country')
     if country_id:
@@ -236,7 +235,6 @@ from .data import create_initial_data
 def personnel(request):
     personnel_list = Personnel.objects.all()
     countries = Country.objects.all()
-    create_initial_data()
     # Filter by country if specified
     country_id = request.GET.get('country')
     if country_id:
