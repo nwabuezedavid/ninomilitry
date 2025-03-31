@@ -14,11 +14,11 @@
     <div class="col-md-4">
         <div class="card mb-4 items-center flex flex-col " >
             {% if person.photo %}
-                <img src="{{ person.photo.url }}" style="object-fit: contain; padding: 22px;" class="card-img-top personnel-photo object-fit " alt="{{ person }}">
+                <img src="{{ person.photo.url }}" style="object-fit: contain; padding: 22px;" class="card-img-top w-full h-[280px]  object-fill personnel-photo object-fit " alt="{{ person }}">
             {% elif person.url %}
                 <img src="{{ person.url }}"  style="object-fit: contain; padding: 22px;"class="card-img-top personnel-photo object-fit " alt="{{ person }}">
             {% else %}
-                <img src="https://via.placeholder.com/400x500?text=No+Photo" class="card-img-top personnel-photo" alt="No photo available">
+                <img src="https://via.placeholder.com/400x500?text=No+Photo" class="card-img-top w-full h-[280px]  object-fill personnel-photo" alt="No photo available">
             {% endif %}
             <div class="card-body">
                 <h3 class="card-title">{{ person.rank }} {{ person.first_name }} {{ person.last_name }}</h3>

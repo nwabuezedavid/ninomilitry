@@ -84,7 +84,7 @@ class AchievementInline(admin.TabularInline):
 
 @admin.register(Personnel)
 class PersonnelAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'rank', 'country', 'years_of_service', 'is_active')
+    list_display = ('first_name', 'last_name', 'rank', 'country','url', 'years_of_service', 'is_active',)
     list_filter = ('rank', 'country', 'is_active')
     search_fields = ('first_name', 'last_name')
     filter_horizontal = ('awards',)

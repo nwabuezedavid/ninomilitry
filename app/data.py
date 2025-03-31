@@ -89,28 +89,28 @@ def create_initial_data():
     # Get objects for relationships
     
     image_urls  = [
-           "https://shape.nato.int/resources/internal/file_views_listing/19546/10_ALBNMRMGenPetritCUNI_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19547/5_belgium_.jpg",
+           "https://static.euronews.com/articles/stories/04/33/27/42/1200x675_cmsv2_627a7552-2e5e-5819-8da6-a65951b9ce86-4332742.jpg",
+    "https://static.euronews.com/articles/stories/04/33/27/42/1200x675_cmsv2_627a7552-2e5e-5819-8da6-a65951b9ce86-4332742.jpg",
     
-    "https://shape.nato.int/resources/internal/file_views_listing/19521/18_bulgaria_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19571/3_canada_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19569/1_croatia_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19527/8_czechia_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19552/1_denmark_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19553/10_estonia_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/20321/12_finland_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19576/9_france_.jpg",
+    "https://img.eurointegration.com.ua/images/doc/c/6/c60d328-thumbs-b-c-cac5fb4b54d6ebaff846c577e291721d.jpg",
+    "https://newsukraine.rbc.ua/static/img/_/g/_gettyimages_1238300344__1__3d3af444c592a3004a3f222e226d5f23_1300x820_186e026b2e2c329c5d87e6ecd4cb67ad_1200x675.jpg",
+    "https://www.pbs.org/newshour/app/uploads/2017/02/RTSYT9T-1024x667.jpg",
+    "https://images.firstpost.com/uploads/2025/03/Ulf-Kristersson-Feb-26-2025-Reuters-2025-03-47d798eaa81cada07ed5a3b8524c12ad.jpg?im=FitAndFill=(596,336)",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAf5jYLSjWBwVyRSwkX91v4ig_d0BKBgQX5FeU1aO_lN4yxvrjH0FN30mwDG8G49hcRns&usqp=CAU",
+    "https://www.nato.int/nato_static_fl2014/assets/pictures/images_mfu/2025/1/stock_cv/zhelyazkov-rosen_rdax_375x503p.jpg",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuqtGnuI2O9TtjSz41wYtCD8Mnhv54eZD1ip12Fim_2sHXpJah1SLNOahhq2RPgc24Y3U&usqp=CAU",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKdzdXXWNZfJUki7jq4f4VFfRHVGcEwQc46w&s",
     "https://shape.nato.int/resources/internal/file_views_listing/19567/14_germany_final_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19530/6_greece_.jpg",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDysK6wWDpdmMxli9zuKj1P1-7Eljm19ahCw&s",
     "https://shape.nato.int/resources/internal/file_views_listing/19577/6_20250304 - 4476DS - HUN NMR_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19690/19_iceland_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19524/11_italy_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/21348/1_latvia_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/21337/1_lithuanian_.jpg",
+    "https://cdn4.focus.bg/fakti/photos/big/aa1/slug-for-change-1.webp",
+    "https://i.insider.com/63d8ed630a08ae0018a62106?width=700",
+    "https://foreignpolicy.com/wp-content/uploads/2023/12/turkey-nato-summit-erdogan-madrid-GettyImages-1241626498.jpg?w=800?quality=90",
+    "https://bsmedia.business-standard.com/_media/bs/img/article/2023-11/21/full/1700531634-0663.jpg?im=FitAndFill=(826,465)",
     "https://shape.nato.int/resources/internal/file_views_listing/19548/3_luxembourg_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19533/1_montenegro_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19568/5_netherlands_.jpg",
-    "https://shape.nato.int/resources/internal/file_views_listing/19696/13_macedonia_.jpg"
+    "https://static.independent.co.uk/2025/02/19/16/5bac5ec42732080e684eb6c27946692fY29udGVudHNlYXJjaGFwaSwxNzQwMDY1MzY1-2.78640601.jpg?quality=75&width=640&crop=3%3A2%2Csmart&auto=webp",
+    "https://p.potaufeu.asahi.com/566b-p/picture/28587896/c9f13fe08e40cd173deede35166e2968.jpg",
+    "https://c.arvakur.is/frimg/1/50/37/1503750.jpg"
     ]
     # Create personnel
     personnel_data = [
@@ -298,49 +298,50 @@ def create_initial_data():
     # Create personnel and their achievements
     for person_data in personnel_data:
         awards = person_data.pop('awards')
-        person = Personnel.objects.create(**person_data)
-        person.awards.set(awards)
+        if not  Personnel.objects.filter(url=person_data['url']).exists():
+            person = Personnel.objects.create(**person_data)
+            person.awards.set(awards)
         
         # Add achievements for each person
-        if person.first_name == 'James':
-            Achievement.objects.create(
-                personnel=person,
-                title='Led Operation Mountain Shield',
-                description='Successfully commanded a multinational force of 15,000 troops in a complex peacekeeping operation.',
-                date=datetime.date(2015, 6, 10)
-            )
-            Achievement.objects.create(
-                personnel=person,
-                title='NATO Strategic Command Appointment',
-                description='Appointed to lead NATO\'s Strategic Command for Operations, overseeing all NATO military operations globally.',
-                date=datetime.date(2018, 3, 15)
-            )
-        elif person.first_name == 'Elizabeth':
-            Achievement.objects.create(
-                personnel=person,
-                title='Humanitarian Mission Success',
-                description='Coordinated the largest humanitarian aid delivery in NATO history, providing critical supplies to over 2 million civilians.',
-                date=datetime.date(2017, 11, 5)
-            )
-            Achievement.objects.create(
-                personnel=person,
-                title='NATO Logistics Transformation Initiative',
-                description='Led the comprehensive overhaul of NATO\'s logistics systems, increasing efficiency by 40% and reducing costs by €300 million annually.',
-                date=datetime.date(2020, 2, 28)
-            )
-        elif person.first_name == 'Jean':
-            Achievement.objects.create(
-                personnel=person,
-                title='Counter-Terrorism Task Force',
-                description='Established and led a multinational counter-terrorism task force that successfully prevented multiple high-profile threats.',
-                date=datetime.date(2016, 8, 12)
-            )
-            Achievement.objects.create(
-                personnel=person,
-                title='Special Operations Training Program',
-                description='Developed an advanced training program for special operations forces that has been adopted by 12 NATO member countries.',
-                date=datetime.date(2019, 5, 20)
-            )
+            if person.first_name == 'James':
+                Achievement.objects.create(
+                    personnel=person,
+                    title='Led Operation Mountain Shield',
+                    description='Successfully commanded a multinational force of 15,000 troops in a complex peacekeeping operation.',
+                    date=datetime.date(2015, 6, 10)
+                )
+                Achievement.objects.create(
+                    personnel=person,
+                    title='NATO Strategic Command Appointment',
+                    description='Appointed to lead NATO\'s Strategic Command for Operations, overseeing all NATO military operations globally.',
+                    date=datetime.date(2018, 3, 15)
+                )
+            elif person.first_name == 'Elizabeth':
+                Achievement.objects.create(
+                    personnel=person,
+                    title='Humanitarian Mission Success',
+                    description='Coordinated the largest humanitarian aid delivery in NATO history, providing critical supplies to over 2 million civilians.',
+                    date=datetime.date(2017, 11, 5)
+                )
+                Achievement.objects.create(
+                    personnel=person,
+                    title='NATO Logistics Transformation Initiative',
+                    description='Led the comprehensive overhaul of NATO\'s logistics systems, increasing efficiency by 40% and reducing costs by €300 million annually.',
+                    date=datetime.date(2020, 2, 28)
+                )
+            elif person.first_name == 'Jean':
+                Achievement.objects.create(
+                    personnel=person,
+                    title='Counter-Terrorism Task Force',
+                    description='Established and led a multinational counter-terrorism task force that successfully prevented multiple high-profile threats.',
+                    date=datetime.date(2016, 8, 12)
+                )
+                Achievement.objects.create(
+                    personnel=person,
+                    title='Special Operations Training Program',
+                    description='Developed an advanced training program for special operations forces that has been adopted by 12 NATO member countries.',
+                    date=datetime.date(2019, 5, 20)
+                )
     
     print("Initial data created successfully!")
 

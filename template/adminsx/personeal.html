@@ -11,7 +11,7 @@
     <div class="bg-white shadow-lg rounded-lg p-6">
         <h2 class="text-2xl font-semibold text-gray-900 mb-4">{{ title }}</h2>
         <style>
-           input, textarea{
+           input, textarea,select{
             width: 100% !important;
             background-color: gray !important;
             padding: 22px !important;
@@ -51,6 +51,9 @@
                     <label class="block text-gray-700">Date of Birth</label>
                     {{ form.date_of_birth.errors }}
                     {{ form.date_of_birth }}
+                    <label class="block text-gray-700">image URL (OPTIONAL)</label>
+                    {{ form.url.errors }}
+                    {{ form.url }}
                     
                     <label class="block text-gray-700">Photo</label>
                     {{ form.photo.errors }}

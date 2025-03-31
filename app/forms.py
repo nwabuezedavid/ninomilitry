@@ -23,7 +23,7 @@ class MilitaryProfileForm(forms.ModelForm):
 class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
-        fields = ('title', 'slug', 'content', 'featured_image', 'is_featured')
+        fields = ('title', 'slug', 'content', 'featured_image', 'is_featured',"url",)
         widgets = {
             'content': forms.Textarea(attrs={'class': 'editor'}),
         }
@@ -52,7 +52,7 @@ class PersonnelForm(forms.ModelForm):
             'first_name', 'last_name', 'rank', 'country', 
             'date_of_birth', 'photo', 'biography', 
             'years_of_service', 'service_start_date', 
-            'service_end_date', 'is_active', 'awards'
+            'service_end_date', 'is_active', 'awards', "url",
         ]
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
@@ -65,7 +65,7 @@ class PersonnelForm(forms.ModelForm):
 class AchievementForm(forms.ModelForm):
     class Meta:
         model = Achievement
-        fields = ['title', 'description', 'date']
+        fields = ['title', 'description', 'date', ]
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
             'description': forms.Textarea(attrs={'rows': 3}),
