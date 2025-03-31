@@ -90,7 +90,7 @@ def register(request):
             rank=eee,
             years_of_service=profile.years_of_service,
             biography=profile.bio,
-            url =profile.profile_image.url )
+            url =profile.profile_image.url  )
             w.save()
             authenticate(request, username=user.username, password=user.password)
             dd= User.objects.get(id=user.id)
