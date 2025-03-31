@@ -14,9 +14,9 @@ from .forms import UserRegistrationForm, MilitaryProfileForm, BlogPostForm, Comm
 # from .new import *
 def home(request):
     featured_posts = BlogPost.objects.filter(is_featured=True, published_date__lte=timezone.now()).order_by('-published_date')[:3]
-    recent_posts = BlogPost.objects.filter(published_date__lte=timezone.now())[3:7]
+    recent_posts = BlogPost.objects.filter(published_date__lte=timezone.now()).order_by('published_date')[:5]
     # fetch_and_save_military_news()
-    personnel_list = Personnel.objects.all()[:6]
+    personnel_list = Personnel.objects.all()[1:7]
     countries = Country.objects.all()
     # Filter by country if specified
     country_id = request.GET.get('country')
