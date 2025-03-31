@@ -251,17 +251,16 @@ def personnel(request):
     # Filter by country if specified
     country_id = request.GET.get('country')
      
-    name = request.GET.get('name')
-
+    name = request.GET.get('pk').lower()
+    print(name)
+    print(personnel_list.filter(Q(first_name__icontains=name) | Q(last_name__icontains=name)))
     if country_id  :
         personnel_list = personnel_list.filter(country_id=country_id)
     
-    if   name:
-        if personnel_list.filter(first_name=name).exists():
-            personnel_list = personnel_list.filter(first_name=name)
-        if personnel_list.filter(last_name=name).exists():
-        
-            personnel_list = personnel_list.filter(last_name=first_name)
+    if name:
+        if personnel_list.filter(Q(first_name__icontains=name) | Q(last_name__icontains=name)).exists():
+            personnel_list = personnel_list.filter(Q(first_name__icontains=name) | Q(last_name__icontains=name))
+
     context = {
         'personnel_list': personnel_list,
         'countries': countries,
