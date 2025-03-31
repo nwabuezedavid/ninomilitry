@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.models import User
-
+import random
 from django.utils import timezone
 from django.db.models import Q
 from django.contrib import messages
@@ -14,7 +14,7 @@ from .forms import UserRegistrationForm, MilitaryProfileForm, BlogPostForm, Comm
 # from .new import *
 def home(request):
     featured_posts = BlogPost.objects.filter(is_featured=True, published_date__lte=timezone.now()).order_by('-published_date')[:3]
-    recent_posts = BlogPost.objects.filter(published_date__lte=timezone.now()).order_by('published_date')[:5]
+    recent_posts = BlogPost.objects.filter(published_date__lte=timezone.now())[:5]
     # fetch_and_save_military_news()
     personnel_list = Personnel.objects.all()[:6]
     countries = Country.objects.all()
