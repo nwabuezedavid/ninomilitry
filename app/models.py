@@ -109,6 +109,8 @@ class Personnel(models.Model):
     is_active = models.BooleanField(default=True)
     awards = models.ManyToManyField(Award, blank=True)
     
+    def username(self):
+        return f"{self.rank} {self.first_name} {self.last_name}"
     def __str__(self):
         return f"{self.rank} {self.first_name} {self.last_name}"
     

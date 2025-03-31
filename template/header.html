@@ -14,7 +14,18 @@
                 <input type="text" id="jdjd" name="pk" placeholder="Search..." class="w-full px-4 py-2 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Search</button>
             </form>
-           
+            <script>
+                document.querySelector('#form').addEventListener("submit", (e) => {
+                    e.preventDefault();  
+                    
+                    // Get the input value inside the event listener
+                    let inpu = document.querySelector("#jdjd").value;
+                    
+                    // Redirect to the new URL
+                    location.href = `/personnel/?pk=${inpu}`;
+                });
+            </script>
+            
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-6">
                 <a style="text-decoration: none !important;" href="{% url 'home' %}" class="hover:text-gray-300 transition-colors">Home</a>

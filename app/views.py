@@ -231,7 +231,8 @@ def blog_list(request):
     })        
 
 
-
+from django.db.models import Value, F, CharField
+from django.db.models.functions import Concat
 
 def about(request):
     return render(request, "./about.html")
@@ -251,16 +252,19 @@ def personnel(request):
     # Filter by country if specified
     country_id = request.GET.get('country')
      
-    name = request.GET.get('pk').lower()
+    name = request.GET.get('pk')
     print(name)
-    print(personnel_list.filter(Q(first_name__icontains=name) | Q(last_name__icontains=name)))
     if country_id  :
         personnel_list = personnel_list.filter(country_id=country_id)
     
     if name:
-        if personnel_list.filter(Q(first_name__icontains=name) | Q(last_name__icontains=name)).exists():
-            personnel_list = personnel_list.filter(Q(first_name__icontains=name) | Q(last_name__icontains=name))
-
+        personnel_list = Personnel.objects.annotate(
+            username=Concat(
+                F("rank__name"), Value(" "), F("first_name"), Value(" "), F("last_name"),
+                output_field=CharField()
+            )
+        ).filter(username__icontains=name)
+             
     context = {
         'personnel_list': personnel_list,
         'countries': countries,
