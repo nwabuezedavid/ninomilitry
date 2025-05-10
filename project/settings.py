@@ -43,6 +43,13 @@ INSTALLED_APPS = [
     'cloudinary',
     'cloudinary_storage',  
 ]
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'devnawgxu',
+    'API_KEY': '381554855418633',
+    'API_SECRET': 'Ifx19wWF1LPYftWx9bRTPJtXxHs',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -121,12 +128,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'devnawgxu',
-    'API_KEY': '381554855418633 ',
-    'API_SECRET': 'Ifx19wWF1LPYftWx9bRTPJtXxHs',
-}
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
  
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
